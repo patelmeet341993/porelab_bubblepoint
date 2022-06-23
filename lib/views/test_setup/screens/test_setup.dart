@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:porelab_bubblepoint/config/app_colors.dart';
@@ -22,7 +23,8 @@ enum Pages{
   ShapeTypePage,
   TortusityPage,
   SizePage,
-
+  SelectBubblePoint,
+  BubblePintSlider
 }
 
 class TestSetup extends StatefulWidget {
@@ -55,6 +57,12 @@ class _TestSetupState extends State<TestSetup> {
     else if(pages==Pages.SizePage){
       return getSizePage();
     }
+    else if(pages==Pages.SelectBubblePoint){
+      return getselectBubblePoint();
+    }
+    else if(pages==Pages.BubblePintSlider){
+      return getBubblePointSlider();
+    }
     else{
       return Container();
     }
@@ -69,7 +77,7 @@ class _TestSetupState extends State<TestSetup> {
       return Image.asset("assets/common/0.2 n.png",height: 300,width: 450,);
     }
     else if(value==0.3){
-      return Image.asset("",height: 300,width: 450,);
+      return Image.asset("assets/common/0.3 n.png",height: 300,width: 450,);
     }
     else if(value==0.4){
       return Image.asset("assets/common/0.4.png",height: 300,width: 450,);
@@ -133,29 +141,41 @@ class _TestSetupState extends State<TestSetup> {
     'Item 5',
   ];
 
-  String wettingFluids= 'Item 1';
-  var wettingFluidsItems = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
+  String wettingFluids= 'Item :2';
+  List<String>  wettingFluidsItems=[
+      'Add Fluid',
+      'Item :2',
+      'Item :3',
+      'Item :4',
+      'Item :5',
+
   ];
+
   int materialType=1;
 
   final tortusityKey = GlobalKey<FormState>();
   final sizeKey = GlobalKey<FormState>();
   final sampleIdKey = GlobalKey<FormState>();
+  final BubblePointSliderKey = GlobalKey<FormState>();
+
 
   TextEditingController sampleProfileController=TextEditingController();
   TextEditingController lotNumberController=TextEditingController();
   TextEditingController enterRangeController=TextEditingController();
   TextEditingController thicknessController=TextEditingController();
+  TextEditingController testPressureFirstValueController=TextEditingController();
+  TextEditingController testPressureSecondValueController=TextEditingController();
+  TextEditingController addFluidNameController=TextEditingController();
+  TextEditingController addFluidValueController=TextEditingController();
+
+
 
   int select=0;
   int selectt=0;
   int sizeSelect=0;
+  int bubblepointselect=0;
   double currentSliderValue=0;
+  double currentSliderValue2=0;
 
   @override
   Widget build(BuildContext context) {
@@ -346,24 +366,24 @@ class _TestSetupState extends State<TestSetup> {
             height: 150,
             child: Row(
               children: [
-                Expanded(
-                  flex: 1,
-                  child: Column(
-
-                    children: [
-                      SizedBox(height: 40,),
-                      CommonText(text: 'Trails'),
-
-
-                      CommonDropDown(dropdownvalue: trails, items: trailsItems, onChanged: (String? newValue) {
-                        setState(() {
-                          trails = newValue!;
-                        });
-                      }),
-
-                    ],
-                  ),
-                ),
+                // Expanded(
+                //   flex: 1,
+                //   child: Column(
+                //
+                //     children: [
+                //       SizedBox(height: 40,),
+                //       CommonText(text: 'Trails'),
+                //
+                //
+                //       CommonDropDown(dropdownvalue: trails, items: trailsItems, onChanged: (String? newValue) {
+                //         setState(() {
+                //           trails = newValue!;
+                //         });
+                //       }),
+                //
+                //     ],
+                //   ),
+                // ),
                 Expanded(flex:4,child: Container())
               ],
             ),
@@ -457,19 +477,20 @@ class _TestSetupState extends State<TestSetup> {
     );
   }
 
-  Widget getMaterialCard({  required String  text, Function() ? onTap, int Selected=0}){
+  Widget getMaterialCard({  required String  text, Function() ? onTap, int Selected=0,required String url}){
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: 170,
         margin:EdgeInsets.only(right: 20),
-        padding: EdgeInsets.symmetric(horizontal: 50,vertical: 40),
+        padding: EdgeInsets.symmetric(horizontal: 10,vertical: 40),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
             color: select==Selected ? AppColors.lightBlueColor:AppColors.whiteColor
         ),
         child:Column(
           children: [
-            Image.asset("assets/common/img.png",height: 100,),
+            Image.asset(url,height: 80,width: 80,),
             SizedBox(height: 20,),
             CommonText(color: AppColors.blackColor,text: text,fontSize: 20,)
           ],
@@ -488,34 +509,34 @@ class _TestSetupState extends State<TestSetup> {
          Row(
            mainAxisAlignment: MainAxisAlignment.center,
            children: [
-             getMaterialCard(text: 'Fibrous',onTap: (){
+             getMaterialCard(url:"assets/common/fibrous.png",text: 'Fibrous',onTap: (){
                select=0;
                setState((){
                });
              },Selected:0),
-             getMaterialCard(text: 'Coated',onTap: (){
+             getMaterialCard(url:"assets/common/coated.png",text: 'Coated',onTap: (){
                 select=1;
                 setState((){
                 });
                 },Selected:1),
-             getMaterialCard(text: 'Consolidate',onTap: (){
+             getMaterialCard(url:"assets/common/consolidate.png",text: 'Consolidate',onTap: (){
              select=2;
              setState((){
              });
              },Selected:2),
-             getMaterialCard(text: 'Laminated',onTap: (){
+             getMaterialCard(url:"assets/common/laminated.png",text: 'Laminated',onTap: (){
               select=3;
               setState((){
               });
               },Selected:3),
-             getMaterialCard(text: 'Unknown',onTap: (){
+             getMaterialCard(url:"assets/common/m1_5.png",text: 'Unknown',onTap: (){
               select=4;
               setState((){
               });
               },Selected:4)
            ],
          ),
-          SizedBox(height: 77,),
+          SizedBox(height: 98,),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -615,7 +636,7 @@ class _TestSetupState extends State<TestSetup> {
                 selectt=6;
                 setState((){
                 });
-              },Selected:6,url: "assets/common/t.png")
+              },Selected:6,url: "assets/common/m1_5.png")
 
             ],
           ),
@@ -949,8 +970,44 @@ class _TestSetupState extends State<TestSetup> {
                         CommonDropDown(width:400,dropdownvalue: wettingFluids, items: wettingFluidsItems, onChanged: (String? newValue) {
                           setState(() {
                             wettingFluids = newValue!;
-                          });})
+                          });}),
+                         SizedBox(height: 20,),
+                         wettingFluids=='Add Fluid' ?
+                         Row(
+                           children: [
+                             CommonTextfeildwithGradient(
+                               text: 'Name',
+                               controller:addFluidNameController ,width: 150,
+                               validator: (value) {
+                                 if (value == null || value.isEmpty) {
+                                   return 'Please enter some text';
+                                 }
+                                 return null;
+                               },),
+                             SizedBox(width: 10,),
+                             CommonText(text: ':'),
+                             SizedBox(width: 10,),
+                             CommonTextfeildwithGradient(
+                               text: 'Value',
+                               controller:addFluidValueController ,width: 150,
+                               validator: (value) {
+                                 if (value == null || value.isEmpty) {
+                                   return 'Please enter some text';
+                                 }
+                                 return null;
+                               },),
+                             SizedBox(width: 10,),
+                             CustomButtom(text: 'Add',
+                               ontap: (){
+                                print('object');
+                                wettingFluidsItems.add("${addFluidNameController.text} :${addFluidValueController.text}");
+                                 setState((){
 
+                                 });
+                               },),
+
+                           ],
+                         ):Container()
                       ],
                     )
                 )
@@ -978,8 +1035,8 @@ class _TestSetupState extends State<TestSetup> {
 
                     }
                     else{
-
-                      showDialog(context: context, builder: (context) =>DailogBox());
+                      selectedEnum=Pages.SelectBubblePoint;
+                      // showDialog(context: context, builder: (context) =>DailogBox());
 
                     }
                     setState((){
@@ -993,6 +1050,221 @@ class _TestSetupState extends State<TestSetup> {
         )
       ),
     );
+  }
+
+  Widget getBubblePointCard({  required String  text, Function() ? onTap, int Selectedd=0,required String url}){
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 170,
+        margin:EdgeInsets.only(right: 20),
+        padding: EdgeInsets.symmetric(horizontal: 10,vertical: 40),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            color: bubblepointselect==Selectedd ? AppColors.lightBlueColor:AppColors.whiteColor
+        ),
+        child:Column(
+          children: [
+            Image.asset(url,height: 80,width: 80,),
+            SizedBox(height: 20,),
+            CommonText(color: AppColors.blackColor,text: text,fontSize: 20,)
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget getselectBubblePoint(){
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          CommonText(text: "Select Bubble Point Trigger",fontSize: 20,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              getBubblePointCard(url:"assets/common/First bubble.png",text: 'First Bubble',onTap: (){
+                bubblepointselect=0;
+                setState((){
+                });
+              },Selectedd:0,),
+              getBubblePointCard(url:"assets/common/moderate n.png",text: 'Moderate',onTap: (){
+                bubblepointselect=1;
+                setState((){
+                });
+              },Selectedd:1),
+              getBubblePointCard(url:"assets/common/continous.png",text: 'Countinous',onTap: (){
+                bubblepointselect=2;
+                setState((){
+                });
+              },Selectedd:2),
+
+            ],
+          ),
+          SizedBox(height: 80,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              CustomButtom(text: 'BACK',
+                ontap: (){
+                  selectedEnum=Pages.SizePage;
+                  setState((){
+                  });
+                },),
+              SizedBox(width: 40,),
+              CustomButtom(text: 'NEXT',
+                ontap: (){
+                  selectedEnum=Pages.BubblePintSlider;
+                  setState((){
+
+                  });
+                },
+              ),
+
+
+
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getBubblePointSlider(){
+    return Form(
+      key:BubblePointSliderKey,
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 20),
+        child:Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              // mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(width: 100,),
+
+                // Expanded(child: Container(color: Colors.green,)),
+                CommonText(text: 'Bubble Point',fontSize: 20,),
+                SizedBox(width: 50,),
+                Container(
+                  width: 800,
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.whiteColor),
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: Row(
+                    children: [
+                     CommonText(text: 'Fast'),
+                      Expanded(
+                        child: Slider(
+                          value: currentSliderValue2,
+                          max: 100,
+                          divisions: 20,
+                          activeColor: AppColors.lightBlueColor,
+                          inactiveColor: AppColors.whiteColor,
+                          thumbColor: AppColors.blackColor,
+                          label: currentSliderValue2.round().toString(),
+                          onChanged: (double value) {
+                            setState(() {
+                              currentSliderValue2 = value;
+                            });
+                          },
+                        ),
+                      ),
+                      CommonText(text: 'Accurate'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 30,),
+            Row(
+              // mainAxisAlignment: MainAxisAlignment.start,
+              // crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(width: 100,),
+                // Expanded(child: Container(color: Colors.green,)),
+                CommonText(text: 'Test Pressure',fontSize: 20,),
+                SizedBox(width: 50,),
+                CommonTextfeildwithGradient(
+                  inputformatters: [
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  keyboard:TextInputType.number,controller: testPressureFirstValueController,width: 150,suffixicon:Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding:  EdgeInsets.only(right: 30),
+                      child: CommonText(text: 'psi'),
+                    ),
+                  ],
+                ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },),
+                SizedBox(width: 20,),
+                CommonText(text: 'to',fontSize: 25,),
+                SizedBox(width: 20,),
+                CommonTextfeildwithGradient(controller: testPressureSecondValueController,width: 150,suffixicon:
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding:  EdgeInsets.only(right: 30),
+                      child: CommonText(text: 'psi'),
+                    ),
+                  ],
+                ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                  inputformatters: [
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                )
+              ],
+            ),
+            SizedBox(height: 189,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                CustomButtom(text: 'BACK',
+                  ontap: (){
+                    selectedEnum=Pages.SelectBubblePoint;
+                    setState((){
+                    });
+                  },),
+                SizedBox(width: 40,),
+                CustomButtom(text: 'NEXT',
+                  ontap: (){
+                    if (!BubblePointSliderKey.currentState!.validate()) {
+                      BubblePointSliderKey.currentState!.save();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('error')),
+                      );
+                    }
+                    else{
+                      showDialog(context: context, builder: (context) =>DailogBox());
+                    }
+                    setState((){
+                    });
+                  },),
+
+
+
+              ],
+            ),
+          ],
+        ),
+      ),
+    ) ;
   }
 
 

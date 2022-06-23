@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:porelab_bubblepoint/config/app_colors.dart';
 import 'package:porelab_bubblepoint/config/common_text.dart';
+import 'package:porelab_bubblepoint/views/commons/common_dropdown.dart';
 import 'package:porelab_bubblepoint/views/commons/custom_smallbutton.dart';
 import 'package:porelab_bubblepoint/views/commons/custom_smallcontainer.dart';
 import 'package:porelab_bubblepoint/views/commons/topheader.dart';
@@ -43,6 +44,21 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
  var scaleType2=false;
  var disableEnable1=false;
  var disableEnable2=false;
+
+  String siUnit = 'psi';
+  var siUnitItems = [
+    'psi',
+    'bar',
+    'torr',
+
+  ];
+  String siUnitSecond = 'psi';
+  var siUnitSecondItems = [
+    'psi',
+    'bar',
+    'torr',
+
+  ];
   Categories selectedEnum = Categories.SYSTEMCONFIGURATION;
   Widget update(Categories  categories){
     if(categories==Categories.SYSTEMCONFIGURATION){
@@ -202,20 +218,20 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                           }
                           return null;
                         },),
-                        getSetRangeRow(title: 'Flow Meter 1',controller: flowMeter1Controller,text: "0",validator:
-                            (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },),
-                        getSetRangeRow(title: 'Flow Meter 2',controller: flowMeter2Controller,text: "0",validator:
-                            (value) {
-                              if (value == null || value.isEmpty) {
-                              return 'Please enter some text';
-                              }
-                              return null;
-                              },),
+                        // getSetRangeRow(title: 'Flow Meter 1',controller: flowMeter1Controller,text: "0",validator:
+                        //     (value) {
+                        //   if (value == null || value.isEmpty) {
+                        //     return 'Please enter some text';
+                        //   }
+                        //   return null;
+                        // },),
+                        // getSetRangeRow(title: 'Flow Meter 2',controller: flowMeter2Controller,text: "0",validator:
+                        //     (value) {
+                        //       if (value == null || value.isEmpty) {
+                        //       return 'Please enter some text';
+                        //       }
+                        //       return null;
+                        //       },),
                         getSetRangeRow(title: 'Flow Controller',controller: flowController,text: "0",validator:
                             (value) {
                           if (value == null || value.isEmpty) {
@@ -241,22 +257,28 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                         ],
                       ),
                       SizedBox(height: 30,),
-                         CustomSmallContainer(text: 'psi',),
+                        CommonDropDown(dropdownvalue: siUnit, items: siUnitItems, onChanged:(String? newValue) {
+                          setState(() {
+                            siUnit  = newValue!;
+                          });} ),
                       SizedBox(height: 10,),
-                         CustomSmallContainer(text: 'psi',),
-                      SizedBox(height: 10,),
-                      Container(
-                       padding: EdgeInsets.symmetric(horizontal: 40,vertical: 15),
-                      ),
-                      SizedBox(height: 10,),
-                         CustomSmallContainer(text: 'sccm',),
-                         SizedBox(height: 10,),
-                         CustomSmallContainer(text: 'sccm',),
-                         SizedBox(height: 10,),
-                         Container(
-                           padding: EdgeInsets.symmetric(horizontal: 40,vertical: 15),
-                         ),
-                         SizedBox(height: 10,),
+                         CommonDropDown(dropdownvalue: siUnitSecond, items: siUnitSecondItems, onChanged:(String? newValue) {
+                           setState(() {
+                             siUnit  = newValue!;
+                           });} ),
+                      // SizedBox(height: 10,),
+                      // Container(
+                      //  padding: EdgeInsets.symmetric(horizontal: 40,vertical: 15),
+                      // ),
+                      // SizedBox(height: 10,),
+                         // CustomSmallContainer(text: 'sccm',),
+                         // SizedBox(height: 10,),
+                         // CustomSmallContainer(text: 'sccm',),
+                         // SizedBox(height: 10,),
+                         // Container(
+                         //   padding: EdgeInsets.symmetric(horizontal: 40,vertical: 15),
+                         // ),
+                         // SizedBox(height: 10,),
 
 
                   ],
@@ -299,9 +321,9 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                 )
               ],
             ),
-            SizedBox(height: 150,),
+            SizedBox(height: 50,),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CustomButtom(text: 'APPLY', ontap: (){
       if (!systemConfrigurationKey.currentState!.validate()) {
@@ -405,17 +427,14 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                     SizedBox(height: 20,),
                     CommonText(text: 'LOW PRESSURE GUAGE',fontSize: 18,),
                     SizedBox(height: 20,),
-                    CommonText(text: 'LOW FLOW METER',fontSize: 18,),
-                    SizedBox(height: 20,),
-                    CommonText(text: 'CURVE FIT',fontSize: 18,)
+                    CommonText(text: 'CURVE FIT',fontSize: 18,),
                 ],
                 )),
                 Expanded(
                   flex: 2,
                     child: Column(
-
-                    children: [
-                    SizedBox(height: 35,),
+                      children: [
+                    SizedBox(height: 68,),
                       getscaleTypeRow(text1: 'DISABLE',text2: 'ENABLE',value:disableEnable1 ,
 
                           onChanged:(bool ? value){
@@ -425,7 +444,7 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
 
                               });
                             }}),
-                      getscaleTypeRow(text1: 'DISABLE',text2: 'ENABLE',value: disableEnable2,
+                      getscaleTypeRow(text1: 'ON',text2: 'OFF',value: disableEnable2,
 
                           onChanged:(bool ? value){
                             {
@@ -445,7 +464,7 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                       child: Column(
                         children: [
 
-                       CommonText(text: 'Set Threshold Value'),
+                       CommonText(text: 'Set Threshold Value',fontSize: 18,),
                          SizedBox(height: 50,),
                        getSetRangeRow(title: 'FIRST BUBBLE',text: '0',controller: firstBubbleController,validator:
                            (value) {
@@ -505,4 +524,6 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
       ),
     ) ;
   }
+
+
 }

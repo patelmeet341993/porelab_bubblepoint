@@ -34,13 +34,19 @@ class _QuickTestState extends State<QuickTest> {
     'Item 4',
     'Item 5',
   ];
-  String testTrail = ' 1';
+  String bptThershold = 'First Bubble';
+  var bptThersholditems = [
+    'First Bubble',
+    'Moderate',
+    'Countious',
+  ];
+  String testTrail = '1';
   var testTrailItems = [
-    ' 1',
-    ' 2',
+    '1',
+    '2',
      '3',
-    ' 4',
-    ' 5',
+    '4',
+    '5',
   ];
   String wettingFluid = '1';
   var wettingFluidItems = [
@@ -195,13 +201,13 @@ class _QuickTestState extends State<QuickTest> {
                   wettingFluid = newValue!;
                 });}),
           SizedBox(height: 20,),
-          CommonTextWithTextfeild(title: 'Turtuosity',text: 'Turtuosity',controller:TurtuosityController ,
-            validator:  (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter some text';
-            }
-            return null;
-          },),
+          // CommonTextWithTextfeild(title: 'Turtuosity',text: 'Turtuosity',controller:TurtuosityController ,
+          //   validator:  (value) {
+          //   if (value == null || value.isEmpty) {
+          //     return 'Please enter some text';
+          //   }
+          //   return null;
+          // },),
           SizedBox(height: 25,),
 
 
@@ -248,16 +254,11 @@ class _QuickTestState extends State<QuickTest> {
              children: [
                Expanded(
                    flex: 2,
-                   child: CommonTextWithTextfeild(title: 'BPT threshold',text: 'BPT threshold',controller:bptThresholdController ,
-                       inputformatters: [
-                         FilteringTextInputFormatter.digitsOnly
-                       ],validator:
-                       (value) {
-                     if (value == null || value.isEmpty) {
-                       return 'Please enter some text';
-                     }
-                     return null;
-                   },)),
+                   child:  CommonTextWithDropDown(dropdownvalue: bptThershold , items: bptThersholditems , title: 'BPT threshold',
+                       onChanged:(String? newValue) {
+                         setState(() {
+                           bptThershold  = newValue!;
+                         });}),),
                Expanded(
                    flex: 1,
                    child: Container()),
@@ -278,105 +279,40 @@ class _QuickTestState extends State<QuickTest> {
            Row(
              children: [
                Expanded(
-                   flex: 2,
+                   flex: 3,
 
-                   child: CommonIncreaseDecrease(title: 'Test Accuracy',controller:testAccuracyController ,)),
-               Expanded(flex: 1,
-                   child: Container())
-             ],
-           ),
-           SizedBox(height: 20,),
-           Row(
-             children: [
-               Expanded(
-                   flex: 2,
-
-                   child: CommonIncreaseDecrease(title: 'Data Stability',controller:dataStabilityController ,)),
-               Expanded(flex: 1,
-                   child: Container())
-             ],
-           ),
-
-           Row(
-             children: [
-               Expanded(
-                    flex: 1,
-                 child: Container()
-               ),
-               Expanded(
-                        flex: 2,
-                   child: CommonRadio(text1: 'Average',text2: 'Delay',text3: 'Method 3',valued: testConfriguration,onChanged:
-                       (int ? value){
-                     setState(() {
-                       testConfriguration = value!;
-                     });
-                   },))
-             ],
-           ),
-          // SizedBox(height: 6,),
-         ],
-       ),
-    );
-  }
-
-  Widget getBottmContainer(){
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 20).copyWith(left: 100,right: 20),
-      margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-        decoration: BoxDecoration(
-          color: AppColors.blackColor,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.whiteColor,
-              offset: Offset(-1, -1),
-              blurRadius: 5.0,
-              spreadRadius:2,
-            ),
-            BoxShadow(
-              color: Colors.black,
-              offset: Offset(5, 5),
-              blurRadius: 5.0,
-              spreadRadius:2,
-            ),
-          ],
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-                   Row(
+                   child:  Row(
                      children: [
                        CommonText(text: 'Test Pressure',fontSize: 25,),
-                       SizedBox(width: 20,),
-                      CommonTextfeildwithGradient(
-                        inputformatters: [
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
-                        keyboard:TextInputType.number,controller: testPressureFirstValueController,width: 150,suffixicon:Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding:  EdgeInsets.only(right: 30),
-                            child: CommonText(text: 'psi'),
-                          ),
-                        ],
-                      ),
-                        validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
-                        }
-                        return null;
-                      },),
+                       SizedBox(width: 45,),
+                       CommonTextfeildwithGradient(
+                         inputformatters: [
+                           FilteringTextInputFormatter.digitsOnly
+                         ],
+                         keyboard:TextInputType.number,controller: testPressureFirstValueController,width: 120,suffixicon:Column(
+                         mainAxisAlignment: MainAxisAlignment.center,
+                         children: [
+                           Padding(
+                             padding:  EdgeInsets.only(right: 15),
+                             child: CommonText(text: 'psi'),
+                           ),
+                         ],
+                       ),
+                         validator: (value) {
+                           if (value == null || value.isEmpty) {
+                             return 'Please enter some text';
+                           }
+                           return null;
+                         },),
                        SizedBox(width: 20,),
                        CommonText(text: 'to',fontSize: 25,),
                        SizedBox(width: 20,),
-                       CommonTextfeildwithGradient(controller: testPressureSecondValueController,width: 150,suffixicon:
+                       CommonTextfeildwithGradient(controller: testPressureSecondValueController,width: 120,suffixicon:
                        Column(
                          mainAxisAlignment: MainAxisAlignment.center,
                          children: [
                            Padding(
-                             padding:  EdgeInsets.only(right: 30),
+                             padding:  EdgeInsets.only(right: 15),
                              child: CommonText(text: 'psi'),
                            ),
                          ],
@@ -387,87 +323,74 @@ class _QuickTestState extends State<QuickTest> {
                            }
                            return null;
                          },
-                          inputformatters: [
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-    )
+                         inputformatters: [
+                           FilteringTextInputFormatter.digitsOnly
+                         ],
+                       )
                      ],
-                   ),
-                  SizedBox(height: 20,),
-                   Row(
-                children: [
-                  CommonText(text: 'Test Method',fontSize:25 ,),
-                  SizedBox(width: 20,),
-                  Expanded(child: CommonRadio(text1: 'Wet,Up Dry Up', text2: 'Dry,Up Wet Up', text3: 'Wet,Up Calculated Dry',valued: testMethod,onChanged:
-                      (int ? value){
-                    setState(() {
-                      testMethod = value!;
-                    });
-                  },))
-                ],
-              ),
-                  SizedBox(height: 20,),
-                  Row(
-                    children: [
-                      CommonText(text: 'Sample Plate',fontSize:25 ,),
-                      SizedBox(width: 20,),
-                      Expanded(child: CommonRadio(text1: 'Small', text2: 'Medium', text3: 'Large',valued:samplePlate,onChanged:
-                          (int ? value){
-                        setState(() {
-                         samplePlate= value!;
-                        });
-                      },))
-                    ],
-                  ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  InkWell(
-                      // onTap: (){
-                      //   if (!Key.currentState!.validate()) {
-                      //     Key.currentState!.save();
-                      //     if(int.parse(testPressureFirstValueController.text) > int.parse(testPressureSecondValueController.text)){
-                      //       testPressureFirstValueController.clear();
-                      //       testPressureSecondValueController.clear();
-                      //       ScaffoldMessenger.of(context).showSnackBar(
-                      //         SnackBar(content: Text('First value must be smaller then second value')),
-                      //       );
-                      //     }
-                      //
-                      //   }
-                      //   else{
-                      //     Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute(builder: (context) => HomePage()),
-                      //     );
-                      //   }
-                      //
-                      //
-                      // },
-                      child: CustomButtom(text: 'NEXT',ontap:(){
-                        if (!Key.currentState!.validate()) {
-                          Key.currentState!.save();
-                          if(int.parse(testPressureFirstValueController.text) > int.parse(testPressureSecondValueController.text)){
-                            testPressureFirstValueController.clear();
-                            testPressureSecondValueController.clear();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('First value must be smaller then second value')),
-                            );
-                          }
+                   ),),
+               Expanded(flex: 1,
+                   child: Container())
+             ],
+           ),
 
-                        }
-                        else{
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => HomePage()),
-                          );
-                        }
+           SizedBox(height: 20,),
+           Row(
+             children: [
+               Expanded(
+                   flex: 2,
 
-                      },))
-                ],
-              )
-            ],
-          ),
+                   child:
+                   CommonTextWithTextfeild(title: 'Turtuosity',text: 'Turtuosity',controller:TurtuosityController ,
+                     validator:  (value) {
+                     if (value == null || value.isEmpty) {
+                       return 'Please enter some text';
+                     }
+                     return null;
+                   },),),
+               Expanded(flex: 1,
+                   child: Container())
+             ],
+           ),
+           SizedBox(height: 50,),
+
+
+         ],
+       ),
+    );
+  }
+
+  Widget getBottmContainer(){
+    return   Expanded(
+      child: Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+
+            InkWell(
+
+                child: CustomButtom(text: 'NEXT',ontap:(){
+                  if (!Key.currentState!.validate()) {
+                    Key.currentState!.save();
+                    if(int.parse(testPressureFirstValueController.text) > int.parse(testPressureSecondValueController.text)){
+                      testPressureFirstValueController.clear();
+                      testPressureSecondValueController.clear();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('First value must be smaller then second value')),
+                      );
+                    }
+
+                  }
+                  else{
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage()),
+                    );
+                  }
+
+                },))
+          ],
         ),
       ),
     );

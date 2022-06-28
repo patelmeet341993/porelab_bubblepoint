@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:porelab_bubblepoint/config/app_colors.dart';
 import 'package:porelab_bubblepoint/config/common_text.dart';
 import 'package:porelab_bubblepoint/hive.dart';
+import 'package:porelab_bubblepoint/utils/hive_manager.dart';
 import 'package:porelab_bubblepoint/views/commons/custom_button.dart';
 import 'package:porelab_bubblepoint/views/login_page/screens/home_page.dart';
 
@@ -22,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState(){
-    MyHive().initMethodHive();
+    HiveManager().initMethodHive();
     super.initState();
   }
 

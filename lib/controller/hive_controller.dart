@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 import '../hive.dart';
+import '../utils/hive_manager.dart';
 
 class HiveController {
   static HiveController? _instance;
@@ -15,7 +16,7 @@ class HiveController {
 
   Future<Box<Map>> initialHive()async{
     Box<Map> firstBox;
-    firstBox = await MyHive().initHive();
+    firstBox = await HiveManager().initHive();
     return firstBox;
 
   }

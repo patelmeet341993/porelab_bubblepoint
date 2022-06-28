@@ -371,23 +371,24 @@ class _QuickTestState extends State<QuickTest> {
             InkWell(
 
                 child: CustomButtom(text: 'NEXT',ontap:(){
-                  if (!Key.currentState!.validate()) {
+                  if (Key.currentState!.validate()) {
                     Key.currentState!.save();
                     if(int.parse(testPressureFirstValueController.text) > int.parse(testPressureSecondValueController.text)){
-                      testPressureFirstValueController.clear();
-                      testPressureSecondValueController.clear();
+                      // testPressureFirstValueController.clear();
+                      // testPressureSecondValueController.clear();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('First value must be smaller then second value')),
                       );
                     }
+                    else{
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomePage()),
+                      );
+                    }
 
                   }
-                  else{
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
-                    );
-                  }
+
 
                 },))
           ],

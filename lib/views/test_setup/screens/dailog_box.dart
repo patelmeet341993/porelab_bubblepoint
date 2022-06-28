@@ -1,22 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:porelab_bubblepoint/config/app_colors.dart';
 import 'package:porelab_bubblepoint/config/common_text.dart';
+import 'package:porelab_bubblepoint/controller/provider/test_setup_provider.dart';
 import 'package:porelab_bubblepoint/views/login_page/screens/home_page.dart';
+import 'package:provider/provider.dart';
 
+import '../../../modals/test_setup_modal.dart';
 import '../../commons/common_textfeildwith_gradient.dart';
 import '../../commons/custom_button.dart';
 class DailogBox extends StatefulWidget {
-  const DailogBox({Key? key}) : super(key: key);
+   TestSetupModal testSetupModal;
+
+DailogBox({required this.testSetupModal});
+
 
   @override
   State<DailogBox> createState() => _DailogBoxState();
 }
 
 class _DailogBoxState extends State<DailogBox> {
+
+  TestSetupProvider? testSetupProvider;
+  Box<Map>? firstBox;
   TextEditingController saveFileController=TextEditingController();
   final dialogKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
+
+    TestSetupProvider testSetupProvider=Provider.of<TestSetupProvider>(context);
+    if(firstBox!=null){
+      testSetupProvider.firstBox=firstBox;
+    }
     return SafeArea(
         child: Form(
           key: dialogKey,
@@ -64,6 +79,8 @@ class _DailogBoxState extends State<DailogBox> {
                         );
                       }
                       else{
+                        Provider.of<TestSetupProvider>(context,listen: false).addlist(firstBox:testSetupProvider.firstBox!,testSetupModal: widget.testSetupModal,key: saveFileController.text.trim());
+                        testSetupProvider.notifyListeners();
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => HomePage()),

@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:porelab_bubblepoint/config/app_colors.dart';
 import 'package:porelab_bubblepoint/config/common_text.dart';
+import 'package:porelab_bubblepoint/controller/hive_controller.dart';
 import 'package:porelab_bubblepoint/views/commons/common_logo_container.dart';
 import 'package:porelab_bubblepoint/views/commons/custom_smallbutton.dart';
 import 'package:porelab_bubblepoint/views/commons/topheader.dart';
 import 'package:porelab_bubblepoint/views/settings_screens/screens/system%20_config.dart';
 import 'package:porelab_bubblepoint/views/test_setup/screens/test_setup.dart';
+import 'package:provider/provider.dart';
 import 'package:touch_ripple_effect/touch_ripple_effect.dart';
 
+import '../../../controller/provider/test_setup_provider.dart';
+import '../../../hive.dart';
 import '../../commons/custom_container.dart';
 import '../../commons/dashboard_top_header.dart';
 import '../../quick_test/screens/quick_test.dart';
@@ -19,8 +24,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Box<Map>? firstBox;
+  @override
+  void initState(){
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      firstBox = await HiveController().initialHive();
+      setState((){});
+    });
+    //wettingFluids='Select Fluid';
+  }
   @override
   Widget build(BuildContext context) {
+    TestSetupProvider testSetupProvider=Provider.of<TestSetupProvider>(context);
+    if(firstBox!=null){
+      testSetupProvider.firstBox=firstBox;
+    }
     return SafeArea(
         child: Scaffold(
           body: getbody(),
@@ -56,7 +75,7 @@ class _HomePageState extends State<HomePage> {
                           context,
                           MaterialPageRoute(builder: (context) => TestSetup()),
                           );
-                          } ,
+                      } ,
                      rippleColor: Colors.white,
                      rippleDuration: Duration(milliseconds: 500),
                      child: ClipRRect(

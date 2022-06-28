@@ -1,15 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
 import 'package:porelab_bubblepoint/config/app_colors.dart';
 import 'package:porelab_bubblepoint/config/common_text.dart';
+import 'package:porelab_bubblepoint/controller/provider/test_setup_provider.dart';
+import 'package:porelab_bubblepoint/modals/test_setup_modal.dart';
 import 'package:porelab_bubblepoint/views/commons/common_dropdown.dart';
 import 'package:porelab_bubblepoint/views/commons/common_radio.dart';
 import 'package:porelab_bubblepoint/views/commons/common_textandtextfeild.dart';
 import 'package:porelab_bubblepoint/views/commons/common_textwithdropdown.dart';
 import 'package:porelab_bubblepoint/views/commons/dashboard_top_header.dart';
+import 'package:provider/provider.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:touch_ripple_effect/touch_ripple_effect.dart';
+import '../../../controller/hive_controller.dart';
+import '../../../hive.dart';
 import '../../commons/common_textfeildwith_gradient.dart';
 import '../../commons/custom_button.dart';
 import '../../commons/custom_smallbutton.dart';
@@ -37,6 +43,123 @@ class TestSetup extends StatefulWidget {
 class _TestSetupState extends State<TestSetup> {
 
   Pages selectedEnum = Pages.SampleIdWholePage;
+
+  TestSetupProvider? testSetupProvider;
+
+  String? sampleId;
+
+  Map<String,TestSetupModal> sampleIdItems={};
+
+  String trails= 'Item 1';
+  var trailsItems = [
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 4',
+    'Item 5',
+  ];
+
+  Map<String,List<String>> myMap={
+
+    "Select Industry Type":["Select Material Application"],
+
+    "Biotech":["Tissue", "Bandage", "Implant", "Body Part", "Filter", "Skin"],
+
+    "Textile":["Geotextiles", "Bullet Proof Vests", "Space suits",
+      "Automotive", "Medical", "Nanotechnology",
+      "Construction", "Agrotextiles", "Packaging",
+      "Sports"],
+
+    "Non-woven & Paper":["Aeronautical", "Automotive", "Construction",
+      "Filtration", "Medical", "Agriculture",
+      "Home Furnishing", "Clothing", "Geo textiles",
+      "Coated Paper", "Packaging", "Felt"],
+
+    "Filtration":["Felts", "Wire Mesh", "Textiles", "Perforated",
+      "water filter", "air filter", "oil filter",
+      "Minipleat HEPA Filters", "Rigidpack",
+      "Multiwedge", "Grease Filter", "Carbon Panel",
+      "Eco Bag Filter", "Carbon CF Filter", "Cartridge",
+      "Strainers", "Hydraulic Filters"],
+
+    "Pharma":["Powdered Drugs", "Packaging materials", "Pouches"],
+
+    "Polymer":["ABS (Acrylonitrile-butadiene-styrene)",
+      "Acrylics(poly-methyl-methacrylate)",
+      "Fluorocarbons(PTFE or TFE)", "Polycarbonates",
+      "Polyethylene", "Polypropylene", "Polystyrene",
+      "Polyester", "Epoxies", "Phenolics"],
+
+    "Battery":["battery separators"],
+
+    "Packaging":["liquid", "solid", "moisture"],
+
+    "Enviroment & Hygene":["Diapers", "Tissues", "Paper towel", "Sheets",
+      "Cosmetics"],
+
+    "Chemical":["Zeolites", "Catalysts", "Carbon black",
+      "Abrasives", "Fertilizers", "Metal powders"],
+
+    "Ceramics":["Automotive", "Electronics", "Filtration",
+      "Aerospace", "Composites", "Coatings", "Implants",
+      "Enviromental", "Chemical"],
+
+    "Acoustics":["Foams", "Barriers",
+      "Composites", "Diffusers",
+      "Ceiling Baffles", "Fiber Glass",
+      "Blankets", "Wall Panels", "Automotive",
+      "Aircraft", "Building"],
+
+    "Other":[ "Other"]
+
+  };
+
+  String industryTypes= "Select Industry Type";
+  String materialCardext='Fibrous';
+  String shapeCardext='Triangular';
+  String sizeCardext='Small';
+  String bubblePointCardText='First Bubble';
+
+  String materialAppilcation= '';
+  String  wettingFluids='Water:72.0';
+  List<String>  wettingFluidsItems=[
+
+      'Add Fluid',
+      'Water:72.0',
+      'MineralOil:34.7',
+      'PetroleumDistillate:30.0',
+      'DenaturedAlcohol:22.3',
+     'Porewick:16.0',
+     'Galwick:15.9',
+  ];
+
+  int materialType=1;
+
+  final tortusityKey = GlobalKey<FormState>();
+  final sizeKey = GlobalKey<FormState>();
+  final sampleIdKey = GlobalKey<FormState>();
+  final BubblePointSliderKey = GlobalKey<FormState>();
+
+
+  TextEditingController sampleProfileController=TextEditingController();
+  TextEditingController lotNumberController=TextEditingController();
+  TextEditingController enterRangeController=TextEditingController();
+  TextEditingController thicknessController=TextEditingController();
+  TextEditingController testPressureFirstValueController=TextEditingController();
+  TextEditingController testPressureSecondValueController=TextEditingController();
+  TextEditingController addFluidNameController=TextEditingController();
+  TextEditingController addFluidValueController=TextEditingController();
+
+  TestSetupModal testSetupModal=TestSetupModal();
+
+  int select=0;
+  int selectt=0;
+  int sizeSelect=0;
+  int bubblepointselect=0;
+  double currentSliderValue=0;
+  double currentSliderValue2=0;
+
+  Box<Map>? firstBox;
 
   Widget update(Pages  pages){
     if(pages==Pages.SampleIdWholePage){
@@ -104,81 +227,46 @@ class _TestSetupState extends State<TestSetup> {
       return Image.asset("assets/common/0.1 n.png",height: 300,width: 450,);
     }
   }
+  void getTestSetList()async{
+    sampleId = null;
 
-  String sampleId= 'Item 1';
-  var sampleIdItems = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
-  ];
+    firstBox = await HiveController().initialHive();
+    Map<dynamic,Map<dynamic, dynamic>> map =firstBox!.toMap();
 
-  String trails= 'Item 1';
-  var trailsItems = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
-  ];
+    map.forEach((key, value) {
+      // print("Key:${key}, Type:${key.runtimeType}");
+      // print("Value:${value}, Type:${value.runtimeType}");
 
-  String industryTypes= 'Item 1';
-  var industryTypesItems = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
-  ];
+      Map<String, dynamic> testSetupModalMap = {};
+      if(value is Map) {
+        try {
+          testSetupModalMap = Map.castFrom<dynamic, dynamic, String, dynamic>(value);
+        }
+        catch(e) {}
+      }
 
-  String materialAppilcation= 'Item 1';
-  var materialAppilcationItems = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
-  ];
+      if(testSetupModalMap.isNotEmpty && key is String) {
+        sampleIdItems[key] = TestSetupModal.fromMap(testSetupModalMap);
+      }
+    });
+    sampleId = sampleIdItems.keys.first;
+    print("length:${sampleIdItems.keys.first.runtimeType}");
+    setState((){});
+  }
 
-  String wettingFluids= 'Item :2';
-  List<String>  wettingFluidsItems=[
-      'Add Fluid',
-      'Item :2',
-      'Item :3',
-      'Item :4',
-      'Item :5',
-
-  ];
-
-  int materialType=1;
-
-  final tortusityKey = GlobalKey<FormState>();
-  final sizeKey = GlobalKey<FormState>();
-  final sampleIdKey = GlobalKey<FormState>();
-  final BubblePointSliderKey = GlobalKey<FormState>();
-
-
-  TextEditingController sampleProfileController=TextEditingController();
-  TextEditingController lotNumberController=TextEditingController();
-  TextEditingController enterRangeController=TextEditingController();
-  TextEditingController thicknessController=TextEditingController();
-  TextEditingController testPressureFirstValueController=TextEditingController();
-  TextEditingController testPressureSecondValueController=TextEditingController();
-  TextEditingController addFluidNameController=TextEditingController();
-  TextEditingController addFluidValueController=TextEditingController();
-
-
-
-  int select=0;
-  int selectt=0;
-  int sizeSelect=0;
-  int bubblepointselect=0;
-  double currentSliderValue=0;
-  double currentSliderValue2=0;
+  @override
+  void initState(){
+    materialAppilcation =myMap["Select Industry Type"]?.first ??'';
+    getTestSetList();
+    //wettingFluids='Select Fluid';
+  }
 
   @override
   Widget build(BuildContext context) {
+    TestSetupProvider testSetupProvider=Provider.of<TestSetupProvider>(context);
+    if(firstBox!=null){
+      testSetupProvider.firstBox=firstBox;
+    }
     return SafeArea(
       child: Scaffold(
         body: getbody()
@@ -282,6 +370,9 @@ class _TestSetupState extends State<TestSetup> {
                       );
                     }
                     else{
+
+                      testSetupModal.sampleProfile=sampleProfileController.text;
+                      testSetupModal.lotNumber=lotNumberController.text;
                        selectedEnum=Pages.IndustryTypePage;
                     }
                     setState((){
@@ -310,18 +401,61 @@ class _TestSetupState extends State<TestSetup> {
                   children: [
                     Expanded(
                         flex: 2,
-                        child: CommonText(text:"Sample ID",fontSize: 25,)),
-                    // Expanded(
-                    //     flex: 3,
-                    //     child: CommonDropDown(dropdownvalue:widget.dropdownvalue , items:widget.items,onChanged:widget.onChanged , )
-                    // )
-                    // Expanded(
-                    //   child: CommonTextWithDropDown(dropdownvalue: sampleId, items: sampleIdItems, title: 'Sample ID', onChanged: (String? newValue) {
-                    //     setState(() {
-                    //       sampleId = newValue!;
-                    //     });
-                    //   }),
-                    // ),
+                        child: CommonText(text: 'Sample ID',fontSize: 25,)),
+                    Expanded(
+                        flex: 3,
+                        child: Container(
+                          height: 35,
+                          padding: EdgeInsets.symmetric(horizontal: 25),
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.whiteColor,
+                                offset: Offset(-3, -0),
+                                blurRadius: 1.0,
+                                spreadRadius:1,
+                              ),
+                              BoxShadow(
+                                color: Colors.black,
+                                offset: Offset(4, 0),
+                                blurRadius: 1.0,
+                                spreadRadius:1,
+                              ),
+                            ],
+                            borderRadius: BorderRadius.circular(100),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                AppColors.blackColor,
+                                AppColors.backGroundColor
+                              ],
+                            ),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                                style:  TextStyle(
+                                  color: AppColors.whiteColor,
+                                  fontSize: 16,
+                                ),
+                                isExpanded: true,
+                                dropdownColor: AppColors.blackColor,
+                                value: sampleId,
+                                icon: Icon(Icons.keyboard_arrow_down,color: AppColors().buttonColor,),
+                                // items: sampleIdItems
+                                items: sampleIdItems.entries.map((MapEntry e) {
+                                  return DropdownMenuItem<String>(child: Text("${e.key}"), value: e.key,);
+                                }).toList(),
+                                onChanged:  (newValue) {
+                                  setState(() {
+                                    print("runtime type: ${newValue.runtimeType}");
+                                    // sampleId = newValue!;
+                                  });
+                                },
+                            ),
+                          ),
+                        )
+                    )
 
                   ],
                 ),
@@ -432,14 +566,15 @@ class _TestSetupState extends State<TestSetup> {
                   padding: EdgeInsets.only(left: 250),
                   child: Column(
                     children: [
-                        CommonTextWithDropDown(dropdownvalue: industryTypes, items: industryTypesItems, title: 'Industry Type', onChanged:
+                        CommonTextWithDropDown(dropdownvalue: industryTypes, items: myMap.keys.toList(), title: 'Industry Type', onChanged:
                             (String? newValue) {
                           setState(() {
                             industryTypes = newValue!;
+                            materialAppilcation = myMap[industryTypes]?.first ?? '';
                           });
                         }),
                       SizedBox(height: 20,),
-                      CommonTextWithDropDown(dropdownvalue: materialAppilcation, items: materialAppilcationItems, title: 'Material Application', onChanged:
+                      CommonTextWithDropDown(dropdownvalue: materialAppilcation, items: myMap[industryTypes] ?? [], title: 'Material Application', onChanged:
                           (String? newValue) {
                         setState(() {
                           materialAppilcation = newValue!;
@@ -466,6 +601,8 @@ class _TestSetupState extends State<TestSetup> {
               SizedBox(width: 40,),
               CustomButtom(text: 'NEXT',
                 ontap: (){
+                  testSetupModal.industryType=industryTypes;
+                  testSetupModal.materialApplication=materialAppilcation;
                   selectedEnum=Pages.MaterialTypePage;
                   setState((){
                   });
@@ -477,9 +614,13 @@ class _TestSetupState extends State<TestSetup> {
     );
   }
 
-  Widget getMaterialCard({  required String  text, Function() ? onTap, int Selected=0,required String url}){
+  Widget getMaterialCard({ required String  text, Function() ? onTap, int Selected=0,required String url}){
     return GestureDetector(
-      onTap: onTap,
+      onTap: (){
+        onTap!();
+        materialCardext=text;
+
+      },
       child: Container(
         width: 170,
         margin:EdgeInsets.only(right: 20),
@@ -550,6 +691,7 @@ class _TestSetupState extends State<TestSetup> {
               SizedBox(width: 40,),
               CustomButtom(text: 'NEXT',
                 ontap: (){
+                  testSetupModal.materialTypeCard=materialCardext;
                   selectedEnum=Pages.ShapeTypePage;
                   setState((){
 
@@ -565,7 +707,11 @@ class _TestSetupState extends State<TestSetup> {
 
   Widget getShapeCard({  required String  text, Function() ? onTap, int Selected=0,required String url}){
     return GestureDetector(
-      onTap: onTap,
+      onTap: (){
+        onTap!();
+        shapeCardext=text;
+
+      },
       child: Container(
         width: 170,
         margin:EdgeInsets.only(right: 20),
@@ -651,6 +797,19 @@ class _TestSetupState extends State<TestSetup> {
                   child: CommonRadio(onChanged:  (int ? value){
                     setState(() {
                       materialType = value!;
+                      // if(materialType==1)
+                      // {
+                      //   print('Hydrophilic');
+                      // }
+                      //   else if(materialType==2)
+                      //   {
+                      //   print('Hydrophobic');
+                      // }
+                      //   else{
+                      //   print('Unknown');
+                      // }
+
+
                     });
                   }, valued: materialType, text1: 'Hydrophilic', text2: 'Hydrophobic', text3: 'Unknown'),
                 ),
@@ -674,6 +833,7 @@ class _TestSetupState extends State<TestSetup> {
               SizedBox(width: 40,),
               CustomButtom(text: 'NEXT',
                 ontap: (){
+                  testSetupModal.shapeType=shapeCardext;
                   selectedEnum=Pages.TortusityPage;
                   setState((){
 
@@ -857,6 +1017,7 @@ class _TestSetupState extends State<TestSetup> {
                         );
                       }
                       else{
+                        testSetupModal.turtosity=enterRangeController.text;
                         selectedEnum=Pages.SizePage;
                       }
                     }
@@ -875,7 +1036,10 @@ class _TestSetupState extends State<TestSetup> {
 
   Widget getSizeCard({  required String  text, Function() ? onTap, int Selected=0,required String url}){
     return GestureDetector(
-      onTap: onTap,
+      onTap: (){
+        onTap!();
+        sizeCardext=text;
+      },
       child: Container(
         width: 170,
         margin:EdgeInsets.only(right: 20),
@@ -967,12 +1131,25 @@ class _TestSetupState extends State<TestSetup> {
                         ),
                         SizedBox(height: 20,),
                         CommonText(text: "Select Wetting Fluid",fontSize: 25,),
-                        CommonDropDown(width:400,dropdownvalue: wettingFluids, items: wettingFluidsItems, onChanged: (String? newValue) {
-                          setState(() {
-                            wettingFluids = newValue!;
-                          });}),
+                        Row(
+                          children: [
+                            CommonDropDown(width:400,dropdownvalue: wettingFluids, items: wettingFluidsItems, onChanged: (String? newValue) {
+                              setState(() {
+                                wettingFluids = newValue!;
+                              });}),
+                             SizedBox(width: 15,),
+                            wettingFluids=='Add Fluid'? InkWell(
+                                onTap: (){
+                                  wettingFluidsItems.removeLast();
+                                  setState((){
+
+                                  });
+                                },
+                                child: Icon(Icons.delete,color: AppColors.lightBlueColor,)):Container()
+                          ],
+                        ),
                          SizedBox(height: 20,),
-                         wettingFluids=='Add Fluid' ?
+                         wettingFluids=='Add Fluid'?
                          Row(
                            children: [
                              CommonTextfeildwithGradient(
@@ -1000,7 +1177,8 @@ class _TestSetupState extends State<TestSetup> {
                              CustomButtom(text: 'Add',
                                ontap: (){
                                 print('object');
-                                wettingFluidsItems.add("${addFluidNameController.text} :${addFluidValueController.text}");
+                                wettingFluidsItems.add("${addFluidNameController.text}:${addFluidValueController.text}");
+                                wettingFluids="${addFluidNameController.text}:${addFluidValueController.text}";
                                  setState((){
 
                                  });
@@ -1035,6 +1213,10 @@ class _TestSetupState extends State<TestSetup> {
 
                     }
                     else{
+                      testSetupModal.sizeType =sizeCardext;
+                      testSetupModal.thickness =thicknessController.text;
+                      testSetupModal.wettingFluid =wettingFluids;
+
                       selectedEnum=Pages.SelectBubblePoint;
                       // showDialog(context: context, builder: (context) =>DailogBox());
 
@@ -1054,7 +1236,10 @@ class _TestSetupState extends State<TestSetup> {
 
   Widget getBubblePointCard({  required String  text, Function() ? onTap, int Selectedd=0,required String url}){
     return GestureDetector(
-      onTap: onTap,
+      onTap: (){
+        onTap!();
+        bubblePointCardText=text;
+      },
       child: Container(
         width: 170,
         margin:EdgeInsets.only(right: 20),
@@ -1114,6 +1299,7 @@ class _TestSetupState extends State<TestSetup> {
               SizedBox(width: 40,),
               CustomButtom(text: 'NEXT',
                 ontap: (){
+                  testSetupModal.bubblePointType =bubblePointCardText;
                   selectedEnum=Pages.BubblePintSlider;
                   setState((){
 
@@ -1244,18 +1430,26 @@ class _TestSetupState extends State<TestSetup> {
                 SizedBox(width: 40,),
                 CustomButtom(text: 'NEXT',
                   ontap: (){
-                    if (!BubblePointSliderKey.currentState!.validate()) {
+                    if (BubblePointSliderKey.currentState!.validate()) {
                       BubblePointSliderKey.currentState!.save();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('error')),
-                      );
-                    }
-                    else{
-                      showDialog(context: context, builder: (context) =>DailogBox());
-                    }
-                    setState((){
-                    });
-                  },),
+                      if (int.parse(testPressureFirstValueController.text) >
+                          int.parse(testPressureSecondValueController.text)) {
+                        testPressureFirstValueController.clear();
+                        testPressureSecondValueController.clear();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(
+                              'First value must be smaller then second value')),
+                        );
+                      }
+                      else {
+                        testSetupModal.bubblePoint = currentSliderValue2;
+                        testSetupModal.testPressureone = double.tryParse(testPressureFirstValueController.text) ?? 0.0;
+                        testSetupModal.testPressuretwo = double.tryParse(testPressureSecondValueController.text) ?? 0.0;
+                        showDialog(context: context,
+                            builder: (context) => DailogBox(testSetupModal: testSetupModal));
+                      }
+                      setState(() {});
+                    }}),
 
 
 

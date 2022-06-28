@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:porelab_bubblepoint/config/app_colors.dart';
 import 'package:porelab_bubblepoint/config/common_text.dart';
 import 'package:porelab_bubblepoint/views/commons/common_dropdown.dart';
+import 'package:porelab_bubblepoint/views/commons/common_textwithdropdown.dart';
 import 'package:porelab_bubblepoint/views/commons/custom_smallbutton.dart';
 import 'package:porelab_bubblepoint/views/commons/custom_smallcontainer.dart';
 import 'package:porelab_bubblepoint/views/commons/topheader.dart';
@@ -16,10 +17,10 @@ import '../../commons/dashboard_top_header.dart';
 enum Categories{
   SYSTEMCONFIGURATION,
   TESTCONFIGURATION,
-  // CALIBRATION,
-  // PREFERENCES,
-  // GENERALSETTING,
-  // ADMINSCREEN1
+   CALIBRATION,
+   PREFERENCES,
+   COMPORT,
+  ADMINSCREEN1
 }
 class SystemConfiguration extends StatefulWidget {
   const SystemConfiguration({Key? key}) : super(key: key);
@@ -40,11 +41,21 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
   TextEditingController countiousController=TextEditingController();
   final systemConfrigurationKey = GlobalKey<FormState>();
   final testConfigurationKey = GlobalKey<FormState>();
- var scaleType1=false;
- var scaleType2=false;
- var disableEnable1=false;
- var disableEnable2=false;
+ bool scaleType1=false;
+ bool scaleType2=false;
+ bool disableEnable1=false;
+ bool disableEnable2=false;
+ bool valveA=false;
+ bool valveB=false;
+ bool valveC=false;
+ bool valveD=false;
+ bool valveE=false;
+ bool valveF=false;
+ bool valveG=false;
+ bool valveH=false;
 
+ int valued=1;
+int selectChamber=1;
   String siUnit = 'psi';
   var siUnitItems = [
     'psi',
@@ -59,6 +70,37 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
     'torr',
 
   ];
+  String pressure = 'torr';
+  var pressureItems = [
+    'psi',
+    'bar',
+    'torr',
+  ];
+  String flow = 'sccm';
+  var flowItems = [
+    'sccm',
+    'sccs',
+    'cfm',
+  ];
+  String diameter = 'nm';
+  var diameterItems = [
+    'nm',
+    'µm',
+  ];
+
+  String precision = '1';
+  var  precisionItems = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+  ];
+  String selectPort = 'selectport';
+  var  selectPortItems = [
+    'selectport',
+
+  ];
   Categories selectedEnum = Categories.SYSTEMCONFIGURATION;
   Widget update(Categories  categories){
     if(categories==Categories.SYSTEMCONFIGURATION){
@@ -66,6 +108,18 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
     }
     else if(categories==Categories.TESTCONFIGURATION){
       return getTestConfiguration();
+    }
+    else if(categories==Categories.CALIBRATION){
+      return getCalibration();
+    }
+    else if(categories==Categories.PREFERENCES){
+      return getPreferences();
+    }
+    else if(categories==Categories.COMPORT){
+      return getComport();
+    }
+    else if(categories==Categories.ADMINSCREEN1){
+      return getAdminScreen1();
     }
     else{
       return Container();
@@ -109,6 +163,7 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
               },selected: 1)),
             SizedBox(width: 8,),
             Expanded(child: getTab(text: 'CALIBRATION',onTap: (){
+              selectedEnum=Categories.CALIBRATION;
               select=2;
               setState((){
 
@@ -116,13 +171,15 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
               },selected: 2)),
             SizedBox(width: 8,),
             Expanded(child: getTab(text: 'PREFERENCES',onTap: (){
+              selectedEnum=Categories.PREFERENCES;
               select=3;
               setState((){
 
               });
               },selected: 3)),
             SizedBox(width: 8,),
-                      Expanded(child: getTab(text: 'GENERAL SETTING',onTap: (){
+                      Expanded(child: getTab(text: 'COM PORT',onTap: (){
+                        selectedEnum=Categories.COMPORT;
               select=4;
               setState((){
 
@@ -130,6 +187,7 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
               },selected: 4)),
             SizedBox(width: 8,),
             Expanded(child: getTab(text: 'ADMIN SCREEN 1',onTap: (){
+              selectedEnum=Categories.ADMINSCREEN1;
                 select=5;
                 setState((){
 
@@ -377,7 +435,7 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
          CommonText(text: text1, color:AppColors.whiteColor,fontSize: 18,textAlign: TextAlign.center),
-
+        SizedBox(width: 5,),
         Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100.0),
@@ -401,6 +459,7 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
             onChanged:onChanged,
           ),
         ),
+        SizedBox(width: 5,),
         CommonText(text: text2,color: AppColors.whiteColor,fontSize: 18,textAlign: TextAlign.center,)
 
       ],
@@ -433,8 +492,35 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                 Expanded(
                   flex: 2,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                    SizedBox(height: 68,),
+                    SizedBox(height: 40,),
+                      Row(
+                        children: [
+                         Radio(
+                             value: 1,
+                             groupValue: selectChamber,
+                             onChanged:  (int?value){
+                               setState((){
+                                 selectChamber=value!;
+                               });
+                             }),
+                          SizedBox(width: 5,),
+                          CommonText(text: 'Manual'),
+                          SizedBox(width: 100,),
+                          Radio(
+                              value: 2,
+                              groupValue: selectChamber,
+                              onChanged:  (int?value){
+                                setState((){
+                                  selectChamber=value!;
+                                });
+                              }),
+                          SizedBox(width: 5,),
+                          CommonText(text: 'Automated')
+
+                        ],
+                      ),
                       getscaleTypeRow(text1: 'DISABLE',text2: 'ENABLE',value:disableEnable1 ,
 
                           onChanged:(bool ? value){
@@ -497,9 +583,9 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                     ))
               ],
             ),
-            SizedBox(height: 150,),
+            SizedBox(height: 50,),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CustomButtom(text: 'APPLY',ontap: (){
                   if (!testConfigurationKey.currentState!.validate()) {
@@ -525,5 +611,345 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
     ) ;
   }
 
+  Widget getCalibration(){
+    return Container(
+      margin: EdgeInsets.only(right: 20,left: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 20,),
+                CommonText(text: 'Select Caliration type',fontSize: 26,),
+          SizedBox(height: 40,),
+            Row(
+              children: [
+                Radio(
+                    value: 1,
+                    groupValue: valued,
+                    onChanged: (int?value){
+                      setState((){
+                        valued=value!;
+                      });
+                    }),
+                SizedBox(width: 10,),
+                CommonText(text: 'Pressure Regulator Calibration')
+              ],
+            ),
+          Row(
+            children: [
+              Radio(
+                  value: 2,
+                  groupValue: valued,
+                  onChanged: (int?value){
+                    setState((){
+                      valued=value!;
+                    });
+                  }),
+              SizedBox(width: 10,),
+              CommonText(text: 'Flow Controller Calibration')
+            ],
+          ),
+          Row(
+            children: [
+              Radio(
+                  value: 3,
+                  groupValue: valued,
+                  onChanged: (int?value){
+                    setState((){
+                      valued=value!;
+                    });
+                  }),
+              SizedBox(width: 10,),
+              CommonText(text: 'Troubleshoot')
+            ],
+          ),
+          Row(
+            children: [
+              Radio(
+                  value: 4,
+                  groupValue: valued,
+                  onChanged: (int?value){
+                    setState((){
+                      valued=value!;
+                    });
+                  }),
+              SizedBox(width: 10,),
+              CommonText(text: 'Leak Test')
+            ],
+          ),
+          Row(
+            children: [
+              Radio(
+                  value: 5,
+                  groupValue: valued,
+                  onChanged: (int? value){
+                    setState((){
+                      valued=value!;
+                    });
+                  }),
+              SizedBox(width: 10,),
+              CommonText(text: 'Board Calibration')
+            ],
+          ),
+          SizedBox(height: 30,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomButtom(text: 'Start',ontap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>HomePage()),
+                );
+              },),
+            ],
+          )
+
+        ],
+      ),
+    ) ;
+  }
+
+  Widget getPreferences(){
+    return Container(
+      margin: EdgeInsets.only(right: 20,left: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 20,),
+          CommonText(text: 'Select Unit',fontSize: 26,),
+          SizedBox(height: 20,),
+          Container(
+            width: 450,
+            child: CommonTextWithDropDown(dropdownvalue: pressure, items: pressureItems, title: 'Pressure', onChanged: (String? newValue) {
+              setState(() {
+                pressure  = newValue!;
+              });} ),
+          ),
+          SizedBox(height: 10,),
+          Container(
+            width: 450,
+            child: CommonTextWithDropDown(dropdownvalue: flow, items: flowItems, title: 'Pressure', onChanged: (String? newValue) {
+              setState(() {
+                flow  = newValue!;
+              });} ),
+          ),
+          SizedBox(height: 10,),
+          Container(
+            width: 450,
+            child: CommonTextWithDropDown(dropdownvalue: diameter, items: diameterItems, title: 'Pressure', onChanged: (String? newValue) {
+              setState(() {
+                diameter  = newValue!;
+              });} ),
+          ),
+          SizedBox(height: 30,),
+          CommonText(text: 'Set Data Precision',fontSize: 26,),
+          SizedBox(height: 20,),
+          Row(
+            children: [
+              SizedBox(width: 180,),
+              Container(
+                width: 270,
+                child: CommonDropDown(dropdownvalue: precision, items: precisionItems,onChanged: (String? newValue) {
+                  setState(() {
+                    precision  = newValue!;
+                  });} ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomButtom(text: 'Apply',ontap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>HomePage()),
+                );
+              },),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getComport(){
+    return Container(
+      margin: EdgeInsets.only(right: 20,left: 20),
+      child: Column(
+        children: [
+          SizedBox(height: 30,),
+          Row(
+            children: [
+              Container(
+                width: 270,
+                child: CommonDropDown(dropdownvalue: selectPort, items: selectPortItems,onChanged: (String? newValue) {
+                  setState(() {
+                    selectPort  = newValue!;
+                  });} ),
+              ),
+              SizedBox(width: 40,),
+              CommonText(text: 'COM : ',fontSize: 20,),
+              CommonText(text: selectPort,fontSize: 20,),
+
+            ],
+          ),
+          SizedBox(height: 250,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomButtom(text: 'Apply',ontap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>HomePage()),
+                );
+              },),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getAdminScreen1(){
+    return Container(
+      margin: EdgeInsets.only(right: 20,left: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 20,),
+        CommonText(text: 'Select Letching and Nonletching Valve ',fontSize: 26,),
+        SizedBox(height: 20,),
+          Row(
+            children: [
+              Column(
+
+                children: [
+                 Row(
+                   children: [
+                     CommonText(text: 'Valve-A'),
+                     SizedBox(width: 50,),
+                     getscaleTypeRow(text1: 'off', text2: 'on', value: valveA, onChanged: (bool ? value){
+                       {
+                         setState(() {
+                           valveA= value!;
+                         });
+                       }})
+                   ],
+                 ),
+                  SizedBox(height: 20,),
+                  Row(
+                    children: [
+                      CommonText(text: 'Valve-B'),
+                      SizedBox(width: 50,),
+                      getscaleTypeRow(text1: 'off', text2: 'on', value: valveB, onChanged: (bool ? value){
+                        {
+                          setState(() {
+                            valveB= value!;
+                          });
+                        }})
+                    ],
+                  ),
+                  SizedBox(height: 20,),
+                  Row(
+                    children: [
+                      CommonText(text: 'Valve-C'),
+                      SizedBox(width: 50,),
+                      getscaleTypeRow(text1: 'off', text2: 'on', value: valveC, onChanged: (bool ? value){
+                        {
+                          setState(() {
+                            valveC= value!;
+                          });
+                        }})
+                    ],
+                  ),
+                  SizedBox(height: 20,),
+                  Row(
+                    children: [
+                      CommonText(text: 'Valve-D'),
+                      SizedBox(width: 50,),
+                      getscaleTypeRow(text1: 'off', text2: 'on', value: valveD, onChanged: (bool ? value){
+                        {
+                          setState(() {
+                            valveD= value!;
+                          });
+                        }})
+                    ],
+                  )
+                ],
+              ),
+              SizedBox(width: 100,),
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      CommonText(text: 'Valve-E'),
+                      SizedBox(width: 50,),
+                      getscaleTypeRow(text1: 'off', text2: 'on', value: valveE, onChanged: (bool ? value){
+                        {
+                          setState(() {
+                            valveE= value!;
+                          });
+                        }})
+                    ],
+                  ),
+                  SizedBox(height: 20,),
+                  Row(
+                    children: [
+                      CommonText(text: 'Valve-F'),
+                      SizedBox(width: 50,),
+                      getscaleTypeRow(text1: 'off', text2: 'on', value: valveF, onChanged: (bool ? value){
+                        {
+                          setState(() {
+                            valveF= value!;
+                          });
+                        }})
+                    ],
+                  ),
+                  SizedBox(height: 20,),
+                  Row(
+                    children: [
+                      CommonText(text: 'Valve-G'),
+                      SizedBox(width: 50,),
+                      getscaleTypeRow(text1: 'off', text2: 'on', value: valveG, onChanged: (bool ? value){
+                        {
+                          setState(() {
+                            valveG= value!;
+                          });
+                        }})
+                    ],
+                  ),
+                  SizedBox(height: 20,),
+                  Row(
+                    children: [
+                      CommonText(text: 'Valve-H'),
+                      SizedBox(width: 50,),
+                      getscaleTypeRow(text1: 'off', text2: 'on', value: valveH, onChanged: (bool ? value){
+                        {
+                          setState(() {
+                            valveH= value!;
+                          });
+                        }})
+                    ],
+                  )
+                ],
+              )
+            ],
+          ),
+        SizedBox(height: 40,),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CustomButtom(text: 'Apply',ontap: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>HomePage()),
+              );
+            },),
+          ],
+        ),
+      ],
+    ),
+    );
+  }
 
 }

@@ -1,9 +1,18 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:porelab_bubblepoint/config/app_colors.dart';
+import 'package:porelab_bubblepoint/folder_structure/folder_structure.dart';
 import 'package:porelab_bubblepoint/views/login_page/screens/login_screen.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+
   runApp(const MyApp());
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  Firestore.initialize("nyiapp-3a612");
 }
 
 class MyApp extends StatelessWidget {
@@ -16,7 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(scaffoldBackgroundColor: AppColors.backGroundColor),
       debugShowCheckedModeBanner: false,
-      home:  LoginScreen(),
+      home:  FolderStructure(),
     );
   }
 }

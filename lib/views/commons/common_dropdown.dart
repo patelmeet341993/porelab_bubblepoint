@@ -5,8 +5,9 @@ class CommonDropDown extends StatefulWidget {
   List<String> items;
   String dropdownvalue;
   double ? width;
+  Widget?hintText;
    void Function(String?)? onChanged;
-  CommonDropDown({this.width,required this.dropdownvalue,required this.items,required this.onChanged});
+  CommonDropDown({this.width,required this.dropdownvalue,required this.items,required this.onChanged,this.hintText});
   @override
   State<CommonDropDown> createState() => _CommonDropDownState();
 }
@@ -55,6 +56,7 @@ class _CommonDropDownState extends State<CommonDropDown> {
       ),
       child:  DropdownButtonHideUnderline(
         child: DropdownButton(
+          hint: widget.hintText,
           style:  TextStyle(
             color: AppColors.whiteColor,
             fontSize: 16,

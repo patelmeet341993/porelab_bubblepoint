@@ -5,6 +5,9 @@ import 'package:porelab_bubblepoint/config/app_colors.dart';
 import 'package:porelab_bubblepoint/folder_structure/folder_structure.dart';
 import 'package:porelab_bubblepoint/views/login_page/screens/login_screen.dart';
 import 'firebase_options.dart';
+import 'package:provider/provider.dart';
+
+import 'controller/provider/test_setup_provider.dart';
 
 void main() async {
 
@@ -22,10 +25,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return MaterialApp(
-      theme: ThemeData(scaffoldBackgroundColor: AppColors.backGroundColor),
-      debugShowCheckedModeBanner: false,
-      home:  FolderStructure(),
+    return ChangeNotifierProvider(
+      create: (BuildContext context)  => TestSetupProvider(),
+      lazy: false,
+      child: MaterialApp(
+        theme: ThemeData(scaffoldBackgroundColor: AppColors.backGroundColor),
+        debugShowCheckedModeBanner: false,
+        home: LoginScreen(),
+      ),
     );
   }
 }

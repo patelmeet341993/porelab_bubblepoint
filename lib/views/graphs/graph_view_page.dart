@@ -1,5 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:porelab_bubblepoint/config/app_colors.dart';
+import 'package:porelab_bubblepoint/config/common_text.dart';
+import 'package:porelab_bubblepoint/views/graphs/pdf_generate_dialog.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import '../../modals/bubblePointModel.dart';
@@ -40,29 +43,32 @@ class _GraphViewPageState extends State<GraphViewPage> {
         if (snapshot.connectionState == ConnectionState.done) {
           return Scaffold(
             appBar: AppBar(
-              title: Text("Results",style: TextStyle(color: Colors.black)),
+              title: Text("Results",style: TextStyle(color: Colors.white)),
               automaticallyImplyLeading: true,
               elevation: 2,
+
               leading: InkWell(
                   onTap: (){
                     Navigator.pop(context);
                   },
-                  child: Icon(Icons.arrow_back,color: Colors.black)),
-              backgroundColor: Colors.white,
+                  child: Icon(Icons.arrow_back,color: Colors.white)),
+              backgroundColor: AppColors.backGroundColor,
               actions: [
                 Tooltip(
                     message: "Generate PDF",
                     child: InkWell(
                         onTap: ()async{
-
-
-
-
-                          final graphImage=await screenshotController.capture();
+                          showDialog(
+                              context: context,
+                              builder: (context){
+                                return PdfGenerateDialog();
+                              }
+                          );
+                          /*final graphImage=await screenshotController.capture();
                           final pdf = await CreateSamplePdf().generatePdf(text: "My Pdf",graphImage: graphImage!);
-                          OpenMyPdf.openFile(pdf!);
+                          OpenMyPdf.openFile(pdf!);*/
                         },
-                        child: Icon(Icons.description,color: Colors.black.withOpacity(.8),size: 30))),
+                        child: Icon(Icons.description,color: Colors.white,size: 30))),
                 SizedBox(width: 30,)
 
               ],
@@ -78,7 +84,7 @@ class _GraphViewPageState extends State<GraphViewPage> {
                       child: Column(
                         children: [
                           SizedBox(height: 20,),
-                          Text("F/PT vs Time",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 25)),
+                          Text("F/PT vs Time",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 25)),
                           Expanded(child: Padding(
                             padding:  EdgeInsets.symmetric(vertical: 30.0,horizontal: 10  ),
                             child: getGraph(),
@@ -111,14 +117,21 @@ class _GraphViewPageState extends State<GraphViewPage> {
       LineChartData(
         borderData: FlBorderData(
           show: true,
+          border: Border(
+            left: BorderSide(color: Colors.white),
+            right: BorderSide(color: Colors.white),
+            bottom: BorderSide(color: Colors.white),
+            top: BorderSide(color: Colors.white),
+          )
         ),
+
         axisTitleData: FlAxisTitleData(
           leftTitle: AxisTitle(
             showTitle: true,
             titleText: "F/PT",
             textStyle: TextStyle(
               fontSize: 30,
-              color: Colors.black
+              color: Colors.white
             )
           ),
           bottomTitle: AxisTitle(
@@ -126,7 +139,7 @@ class _GraphViewPageState extends State<GraphViewPage> {
           titleText: "Time (seconds)",
               textStyle: TextStyle(
                   fontSize: 30,
-                  color: Colors.black
+                  color: Colors.white
               )
         )
         ),
@@ -139,6 +152,7 @@ class _GraphViewPageState extends State<GraphViewPage> {
                 getTextStyles:(contex,val){
                   return TextStyle(
                       fontSize: 13,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold
                   );
 
@@ -152,7 +166,8 @@ class _GraphViewPageState extends State<GraphViewPage> {
             getTextStyles:(contex,val){
               return TextStyle(
                 fontSize: 13,
-                fontWeight: FontWeight.bold
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold
               );
 
             } ,
@@ -187,9 +202,9 @@ class _GraphViewPageState extends State<GraphViewPage> {
                 getBlueDivider(),
                 Row(
                   children: [
-                    Expanded(flex: 3,child: Text("Sample Name")),
-                    Expanded(child: Text("Bubble Pressure")),
-                    Expanded(child: Text("Bubble Diameter")),
+                    Expanded(flex: 3,child: CommonText(text: "Sample Name",color: Colors.white,)),
+                    Expanded(child: CommonText(text: "Bubble Pressure",color: Colors.white,)),
+                    Expanded(child: CommonText(text: "Bubble Diameter",color: Colors.white,)),
                   ],
                 ),
                 getBlueDivider(),
@@ -215,8 +230,8 @@ class _GraphViewPageState extends State<GraphViewPage> {
                 getBlueDivider(),
                 Row(
                   children: [
-                    Expanded(flex: 2,child: Text("Average Bubble Diameter")),
-                    Text("178.25 (mn)"),
+                    Expanded(flex: 2,child: CommonText(text: "Average Bubble Diameter",color: Colors.white,)),
+                   CommonText(text: "178.25 (mn)",color: Colors.white,),
                   ],
                 ),
                 getBlueDivider(),
@@ -241,9 +256,9 @@ class _GraphViewPageState extends State<GraphViewPage> {
   Widget getFilesList({String fileName="",String bpressure="",String bdiameter="",}){
     return Row(
       children: [
-        Expanded(flex: 3,child: Text(fileName)),
-        Expanded(child: Text(bpressure)),
-        Expanded(child: Text(bdiameter)),
+        Expanded(flex: 3,child: CommonText(text: fileName,color: Colors.white,)),
+        Expanded(child: CommonText(text: bpressure,color: Colors.white,)),
+        Expanded(child: CommonText(text: bdiameter,color: Colors.white,)),
       ],
     );
   }
@@ -251,8 +266,8 @@ class _GraphViewPageState extends State<GraphViewPage> {
   Widget getCircularDiameterView(){
     return Column(
       children: [
-        Text("Bubble Point Diameter"),
-        Text("( Macro Pore )"),
+        CommonText(text: "Bubble Point Diameter",color: Colors.white,),
+        CommonText(text: "( Macro Pore )",color: Colors.white,),
         SizedBox(height: 15,),
         Stack(
           children: [

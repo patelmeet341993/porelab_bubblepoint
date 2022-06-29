@@ -3,6 +3,7 @@ import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:porelab_bubblepoint/config/app_colors.dart';
 import 'package:porelab_bubblepoint/folder_structure/folder_structure.dart';
+import 'package:porelab_bubblepoint/views/login_page/screens/home_page.dart';
 import 'package:porelab_bubblepoint/views/login_page/screens/login_screen.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData(scaffoldBackgroundColor: AppColors.backGroundColor),
         debugShowCheckedModeBanner: false,
-        home: FolderStructure(),
+        home: LoginScreen(),
       ),
     );
   }

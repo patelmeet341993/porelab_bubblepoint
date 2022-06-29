@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData(scaffoldBackgroundColor: AppColors.backGroundColor),
         debugShowCheckedModeBanner: false,
-        home: LoginScreen(),
+        home: FolderStructure(),
       ),
     );
   }

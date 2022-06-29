@@ -11,6 +11,7 @@ class TestSetupModal{
   String sizeType;
   String thickness;
   String wettingFluid;
+
   String bubblePointType;
   double bubblePoint;
   double testPressureone;

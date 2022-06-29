@@ -43,7 +43,11 @@ class _GraphViewPageState extends State<GraphViewPage> {
               title: Text("Results",style: TextStyle(color: Colors.black)),
               automaticallyImplyLeading: true,
               elevation: 2,
-              leading: Icon(Icons.arrow_back,color: Colors.black),
+              leading: InkWell(
+                  onTap: (){
+                    Navigator.pop(context);
+                  },
+                  child: Icon(Icons.arrow_back,color: Colors.black)),
               backgroundColor: Colors.white,
               actions: [
                 Tooltip(

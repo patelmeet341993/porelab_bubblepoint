@@ -60,7 +60,7 @@ class CommonLogoContainer extends StatelessWidget {
                           end: Alignment.bottomRight,
                           colors: [AppColors.whiteColor, AppColors.blackColor]),
                   ),
-                  child: Image.asset(url,height: 60,color: Colors.lightBlue,)
+                  child: Image.asset(url,height: 60,width: 60,color: Colors.lightBlue,)
               ),
             ),
           ),

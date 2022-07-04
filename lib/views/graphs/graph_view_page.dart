@@ -1,7 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:porelab_bubblepoint/config/app_colors.dart';
 import 'package:porelab_bubblepoint/config/common_text.dart';
+import 'package:porelab_bubblepoint/utils/my_print.dart';
+import 'package:porelab_bubblepoint/views/commons/modal_progress_hud.dart';
 import 'package:porelab_bubblepoint/views/graphs/pdf_generate_dialog.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
@@ -20,8 +24,10 @@ class GraphViewPage extends StatefulWidget {
 class _GraphViewPageState extends State<GraphViewPage> {
 
   Future? getFutureData;
+  bool pageMounted = false,isLoading = false;
   List<FlSpot> flSpotList = [];
   ScreenshotController screenshotController = ScreenshotController();
+  bool isDarkGraph=false;
 
   Future<void> getFlSpots() async {
     for(int i=0;i<widget.bubblePointModel.ans.length;i++){
@@ -32,11 +38,15 @@ class _GraphViewPageState extends State<GraphViewPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+       pageMounted = true;
+    });
     getFutureData = getFlSpots();
   }
 
   @override
   Widget build(BuildContext context) {
+    pageMounted=false;
     return FutureBuilder(
       future: getFutureData,
       builder: (BuildContext context, AsyncSnapshot snapshot){
@@ -58,12 +68,29 @@ class _GraphViewPageState extends State<GraphViewPage> {
                     message: "Generate PDF",
                     child: InkWell(
                         onTap: ()async{
+                          MyPrint.printOnConsole("Page Mounted a above : $pageMounted");
+                          setState(() {
+                            isLoading=true;
+                            isDarkGraph = true;
+                          });
+                          await Future.delayed(Duration(seconds: 2));
+
+                          /*while(pageMounted){
+                            await Future.delayed(Duration(milliseconds: 20));
+                          }*/
+                          Uint8List? graphImage = await screenshotController.capture();
                           showDialog(
                               context: context,
                               builder: (context){
-                                return PdfGenerateDialog();
+                                return PdfGenerateDialog(bubblePointModel: widget.bubblePointModel,graphImage: graphImage ?? Uint8List.fromList([]),);
                               }
                           );
+
+                          setState(() {
+                            isDarkGraph = false;
+                            isLoading=false;
+
+                          });
                           /*final graphImage=await screenshotController.capture();
                           final pdf = await CreateSamplePdf().generatePdf(text: "My Pdf",graphImage: graphImage!);
                           OpenMyPdf.openFile(pdf!);*/
@@ -73,36 +100,43 @@ class _GraphViewPageState extends State<GraphViewPage> {
 
               ],
             ),
-            body: Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: Screenshot(
-                    controller: screenshotController,
-                    child: Container(
-                       margin: EdgeInsets.symmetric(horizontal: 10).copyWith(left: 10),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 20,),
-                          Text("F/PT vs Time",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 25)),
-                          Expanded(child: Padding(
-                            padding:  EdgeInsets.symmetric(vertical: 30.0,horizontal: 10  ),
-                            child: getGraph(),
-                          )),
-                          SizedBox(height: 20,),
-                        ],
+            body: ModalProgressHUD(
+              inAsyncCall: isLoading,
+              progressIndicator:Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  color: AppColors.backGroundColor,child: Center(child: CircularProgressIndicator(color: AppColors.lightBlueColor))),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Screenshot(
+                      controller: screenshotController,
+                      child: Container(
+                         margin: EdgeInsets.symmetric(horizontal: 10).copyWith(left: 10),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 20,),
+                            Text("F/PT vs Time",style: TextStyle(color: isDarkGraph?Colors.black:Colors.white,fontWeight: FontWeight.bold,fontSize: 25)),
+                            Expanded(child: Padding(
+                              padding:  EdgeInsets.symmetric(vertical: 30.0,horizontal: 10  ),
+                              child: getGraph(),
+                            )),
+                            SizedBox(height: 20,),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 30.0),
-                  child: VerticalDivider(color: Colors.grey,thickness: 1,),
-                ),
-                Expanded(
-                    child: getGraphInfoBody()
-                )
-              ],
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 30.0),
+                    child: VerticalDivider(color: Colors.grey,thickness: 1,),
+                  ),
+                  Expanded(
+                      child: getGraphInfoBody()
+                  )
+                ],
+              ),
             ),
           );
         }else{
@@ -118,10 +152,10 @@ class _GraphViewPageState extends State<GraphViewPage> {
         borderData: FlBorderData(
           show: true,
           border: Border(
-            left: BorderSide(color: Colors.white),
-            right: BorderSide(color: Colors.white),
-            bottom: BorderSide(color: Colors.white),
-            top: BorderSide(color: Colors.white),
+            left: BorderSide(color: isDarkGraph?Colors.black:Colors.white),
+            right: BorderSide(color: isDarkGraph?Colors.black:Colors.white),
+            bottom: BorderSide(color:isDarkGraph?Colors.black: Colors.white),
+            top: BorderSide(color: isDarkGraph?Colors.black:Colors.white),
           )
         ),
 
@@ -130,16 +164,16 @@ class _GraphViewPageState extends State<GraphViewPage> {
             showTitle: true,
             titleText: "F/PT",
             textStyle: TextStyle(
-              fontSize: 30,
-              color: Colors.white
+              fontSize:isDarkGraph ?30: 20,
+              color: isDarkGraph ? Colors.black : Colors.white
             )
           ),
           bottomTitle: AxisTitle(
             showTitle: true,
           titleText: "Time (seconds)",
               textStyle: TextStyle(
-                  fontSize: 30,
-                  color: Colors.white
+                  fontSize: isDarkGraph ?30:20,
+                  color: isDarkGraph?Colors.black:Colors.white
               )
         )
         ),
@@ -152,7 +186,7 @@ class _GraphViewPageState extends State<GraphViewPage> {
                 getTextStyles:(contex,val){
                   return TextStyle(
                       fontSize: 13,
-                      color: Colors.white,
+                      color:isDarkGraph?Colors.black: Colors.white,
                       fontWeight: FontWeight.bold
                   );
 
@@ -166,7 +200,7 @@ class _GraphViewPageState extends State<GraphViewPage> {
             getTextStyles:(contex,val){
               return TextStyle(
                 fontSize: 13,
-                  color: Colors.white,
+                  color: isDarkGraph?Colors.black:Colors.white,
                   fontWeight: FontWeight.bold
               );
 
@@ -213,8 +247,7 @@ class _GraphViewPageState extends State<GraphViewPage> {
                     itemCount: 5,
                       itemBuilder: (context,index){
                         return getFilesList(bdiameter: "newFile",bpressure: "2.45",fileName: "178.25");
-
-                      }
+                    }
                   ),
                 )
 
@@ -230,7 +263,7 @@ class _GraphViewPageState extends State<GraphViewPage> {
                 getBlueDivider(),
                 Row(
                   children: [
-                    Expanded(flex: 2,child: CommonText(text: "Average Bubble Diameter",color: Colors.white,)),
+                   Expanded(flex: 2,child: CommonText(text: "Average Bubble Diameter",color: Colors.white,)),
                    CommonText(text: "178.25 (mn)",color: Colors.white,),
                   ],
                 ),

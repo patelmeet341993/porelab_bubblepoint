@@ -4,7 +4,7 @@ import 'package:porelab_bubblepoint/config/common_text.dart';
 import 'package:touch_ripple_effect/touch_ripple_effect.dart';
 class CustomButtom extends StatelessWidget {
  String text;
- void Function() ? ontap;
+ Function()? ontap;
 CustomButtom({required this.text,this.ontap});
   @override
   Widget build(BuildContext context) {

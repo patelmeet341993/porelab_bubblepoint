@@ -3,8 +3,10 @@ import 'package:firedart/firedart.dart'as fireDart;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:porelab_bubblepoint/controller/provider/folder_structure_provider.dart';
+import 'package:porelab_bubblepoint/modals/bubblePointModel.dart';
 import 'package:porelab_bubblepoint/utils/hive_manager.dart';
-import 'package:porelab_bubblepoint/utils/my_print.dart';
+import 'package:provider/provider.dart';
 
 class FolderStructure extends StatefulWidget {
   const FolderStructure({Key? key}) : super(key: key);
@@ -122,7 +124,11 @@ class _FolderStructureState extends State<FolderStructure> {
         child: Column(children: subList.entries.map((e){
         return ListTile(
           onTap: (){
-            print("value : ${e.value["flow"].runtimeType}");
+            FolderStructureProvider fsp = Provider.of<FolderStructureProvider>(context,listen: false);
+            Map<String,BubblePointModel> bubblePointMap =  {};
+            bubblePointMap[e.key] = BubblePointModel.fromJson(e.value);
+            fsp.bubblePointModelList.add(bubblePointMap);
+            print("length : ${fsp.bubblePointModelList.length}");
           },
           title: Text(e.key),
         );

@@ -103,10 +103,7 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(width: 110,),
                   CommonLogoContainer(
                       onTap: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SystemConfiguration()),
-                        );
+
                       },
                       url: "assets/common/icon 4.png"),
                  // SizedBox(width: 20,),
@@ -129,7 +126,12 @@ class _HomePageState extends State<HomePage> {
                       url: "assets/common/icon 4 (1).png"),
                   SizedBox(width: 110,),
                   CommonLogoContainer(
-                      onTap: (){},
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SystemConfiguration()),
+                        );
+                      },
                       url: "assets/common/icon 5.png"),
                   SizedBox(width: 110,),
                   CommonLogoContainer(

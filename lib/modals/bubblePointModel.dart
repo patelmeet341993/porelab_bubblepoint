@@ -1,64 +1,67 @@
 class BubblePointModel {
-  String testname = "";
-  List<double> p1 = [];
-  List<double> p2 = [];
-  double bpressure = 0.0;
-  String fluidname = "";
-  String duration = "";
-  String crosssection = "";
-  String materialtype = "";
-  String splate = "";
-  List<double> flow = [];
-  double bdiameter = 0.0;
-  String durationsecond = "";
-  double thresold = 0.0;
-  List<double> ans = [];
-  String testtime = "";
-  String testdate = "";
-  List<double> dp = [];
-  double fluidvalue = 0.0;
-  List<double> dt = [];
-  double tfact = 0.0;
-  List<double> t = [];
-  String application = "";
+  String testname = "",
+      fluidname = "",
+      duration = "",
+      crosssection = "",
+      materialtype = "",
+      splate = "",
+      durationsecond = "",
+      testtime = "",
+      testdate = "",
+      application = "",
+      indistry = "",
+      materialclassification = "";
   int thikness = 0;
-  String indistry = "";
-  double samplediameter = 0.0;
-  String materialclassification = "";
+  double bpressure = 0.0,
+      bdiameter = 0.0,
+      thresold = 0.0,
+      fluidvalue = 0.0,
+      tfact = 0.0,
+      samplediameter = 0.0;
+  List<double> p1 = [], p2 = [], flow = [], ans = [], dp = [], dt = [], t = [];
 
-  BubblePointModel(
-      {this.testname = "",
-        this.p1 = const [],
-        this.p2 = const [],
-        this.bpressure = 0.0,
-        this.fluidname = "",
-        this.duration = "",
-        this.crosssection = "",
-        this.materialtype = "",
-        this.splate = "",
-        this.flow = const [],
-        this.bdiameter = 0.0,
-        this.durationsecond = "",
-        this.thresold = 0.0,
-        this.ans = const [],
-        this.testtime = "",
-        this.testdate = "",
-        this.dp  = const [],
-        this.fluidvalue = 0.0,
-        this.dt = const [],
-        this.tfact = 0.0,
-        this.t = const [],
-        this.application = "",
-        this.thikness = 0,
-        this.indistry = "",
-        this.samplediameter = 0.0,
-        this.materialclassification = "",
-      });
+  BubblePointModel({
+    this.testname = "",
+    this.p1 = const [],
+    this.p2 = const [],
+    this.bpressure = 0.0,
+    this.fluidname = "",
+    this.duration = "",
+    this.crosssection = "",
+    this.materialtype = "",
+    this.splate = "",
+    this.flow = const [],
+    this.bdiameter = 0.0,
+    this.durationsecond = "",
+    this.thresold = 0.0,
+    this.ans = const [],
+    this.testtime = "",
+    this.testdate = "",
+    this.dp = const [],
+    this.fluidvalue = 0.0,
+    this.dt = const [],
+    this.tfact = 0.0,
+    this.t = const [],
+    this.application = "",
+    this.thikness = 0,
+    this.indistry = "",
+    this.samplediameter = 0.0,
+    this.materialclassification = "",
+  });
 
   BubblePointModel.fromJson(Map<String, dynamic> json) {
     testname = json['testname'];
-    p1 = json['p1'].cast<int>();
-    p2 = json['p2'].cast<int>();
+
+    String piValue = json['p1'] ?? "";
+    if(piValue.isNotEmpty){
+      piValue.split(",").forEach((element) {
+        double p1Double = double.tryParse(element) ?? 0.0;
+        p1.add(p1Double);
+      });
+    }
+
+    // p1 = json['p1'] ?? ;
+    p2 = stringToListDouble(json['p2']??"");
     bpressure = json['bpressure'];
     fluidname = json['fluidname'];
     duration = json['duration'];
@@ -113,5 +116,16 @@ class BubblePointModel {
     data['samplediameter'] = this.samplediameter;
     data['materialclassification'] = this.materialclassification;
     return data;
+  }
+
+  List<double> stringToListDouble(String val){
+    List<double> convertedVal = [];
+    if(val.isNotEmpty){
+      val.split(",").forEach((element) {
+        double p1Double = double.tryParse(element) ?? 0.0;
+        convertedVal.add(p1Double);
+      });
+    }
+    return convertedVal;
   }
 }

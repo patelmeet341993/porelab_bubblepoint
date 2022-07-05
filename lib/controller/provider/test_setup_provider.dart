@@ -14,6 +14,5 @@ void addlist({required Box<Map> firstBox,required TestSetupModal testSetupModal,
   // firstBox.add(testSetupModal.toMap());
   firstBox.put(key, testSetupModal.toMap());
   notifyListeners();
-}
-
+  }
 }

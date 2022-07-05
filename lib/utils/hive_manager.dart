@@ -71,4 +71,12 @@ class HiveManager {
 
     return porelabbox;
   }
+  Future<Box<Map>> initHivetwo()async{
+    Box<Map> dropDownItemBox;
+    dropDownItemBox=await Hive.openBox<Map>("dropDownItemBox");
+    print('gotbox :${dropDownItemBox}');
+    print('length:${dropDownItemBox.toMap()}');
+
+    return dropDownItemBox;
+  }
 }

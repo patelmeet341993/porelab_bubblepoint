@@ -21,7 +21,6 @@ class _FolderStructureState extends State<FolderStructure> {
   Map<String, dynamic> subList = {};
   String selectedKey = "";
 
-
   Future<void> getData()async{
     fireDart.Page<fireDart.Document> values = await fireDart.Firestore.instance.collection("users").document("N0048").collection("files").document("bubblepoint").collection("files").get();
     print("values: ${values.length}");

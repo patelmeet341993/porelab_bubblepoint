@@ -10,12 +10,13 @@ class TopHeader extends StatelessWidget {
   bool show ;
   String text;
    Function()? ontap;
-   TopHeader({ this.icon , this.show=false ,required this.text,this.ontap});
+   double width;
+   TopHeader({ this.icon , this.show=false ,required this.text,this.ontap,this.width=600});
    @override
   Widget build(BuildContext context) {
     return   Container(
       padding: EdgeInsets.symmetric(vertical: 30),
-      width: 600,
+      width: width,
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(

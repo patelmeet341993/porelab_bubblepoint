@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'dart:io';
 
 import 'package:firedart/firedart.dart'as fireDart;
 import 'package:firedart/firestore/firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:porelab_bubblepoint/config/app_colors.dart';
 import 'package:porelab_bubblepoint/controller/provider/folder_structure_provider.dart';
@@ -17,23 +19,17 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   fireDart.Firestore.initialize("nyiapp-3a612");
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  /*if([Platform.isAndroid, Platform.isIOS, Platform.isMacOS, kIsWeb].contains(true)) {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+  }*/
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
   // This widget is the root of your application.
-
-
-
-
   @override
   Widget build(BuildContext context) {
-
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => TestSetupProvider(), ),

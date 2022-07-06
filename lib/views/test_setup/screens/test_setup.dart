@@ -447,9 +447,7 @@ class _TestSetupState extends State<TestSetup> {
         Expanded(
           flex: 1,
           child: Container(
-
             padding: EdgeInsets.only(left: 250),
-
             child: Column(
               children: [
                 Row(

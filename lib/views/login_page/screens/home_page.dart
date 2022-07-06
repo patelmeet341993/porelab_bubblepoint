@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:porelab_bubblepoint/config/app_colors.dart';
 import 'package:porelab_bubblepoint/config/common_text.dart';
 import 'package:porelab_bubblepoint/controller/hive_controller.dart';
+import 'package:porelab_bubblepoint/folder_structure/folder_structure.dart';
 import 'package:porelab_bubblepoint/views/commons/common_logo_container.dart';
 import 'package:porelab_bubblepoint/views/commons/custom_smallbutton.dart';
 import 'package:porelab_bubblepoint/views/commons/topheader.dart';
@@ -103,10 +104,7 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(width: 110,),
                   CommonLogoContainer(
                       onTap: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SystemConfiguration()),
-                        );
+                        Navigator.push(context, MaterialPageRoute(builder: (Context) => FolderStructure()));
                       },
                       url: "assets/common/icon 4.png"),
                  // SizedBox(width: 20,),
@@ -129,7 +127,12 @@ class _HomePageState extends State<HomePage> {
                       url: "assets/common/icon 4 (1).png"),
                   SizedBox(width: 110,),
                   CommonLogoContainer(
-                      onTap: (){},
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SystemConfiguration()),
+                        );
+                      },
                       url: "assets/common/icon 5.png"),
                   SizedBox(width: 110,),
                   CommonLogoContainer(

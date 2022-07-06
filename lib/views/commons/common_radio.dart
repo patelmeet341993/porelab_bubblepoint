@@ -5,8 +5,10 @@ class CommonRadio extends StatefulWidget {
 String text1;
 String text2;
 String text3;
-int ? valued;
-void Function(int?)? onChanged;
+
+
+String ? valued;
+void Function(String?)? onChanged;
 CommonRadio({required this.onChanged,required this.valued,required this.text1,required this.text2,required this.text3});
   @override
   State<CommonRadio> createState() => _CommonRadioState();
@@ -23,7 +25,7 @@ class _CommonRadioState extends State<CommonRadio> {
           child: ListTile(
             leading: Radio(
               activeColor: AppColors.lightBlueColor,
-                value: 1,
+                value: "Hydrophilic",
                 groupValue: widget.valued,
                 onChanged:widget.onChanged),
              title:CommonText(text:widget.text1) ,
@@ -33,7 +35,7 @@ class _CommonRadioState extends State<CommonRadio> {
           child: ListTile(
             leading: Radio(
               activeColor: AppColors.lightBlueColor,
-              value: 2,
+              value: "Hydrophobic",
               groupValue: widget.valued,
               onChanged:widget.onChanged),
             title:CommonText(text: widget.text2) ,
@@ -43,9 +45,10 @@ class _CommonRadioState extends State<CommonRadio> {
           child: ListTile(
             leading: Radio(
               activeColor: AppColors.lightBlueColor,
-              value: 3,
+              value: "Unknown",
               groupValue: widget.valued,
-              onChanged:widget.onChanged),
+              onChanged:widget.onChanged
+            ),
             title:CommonText(text:widget.text3) ,
           ),
         )

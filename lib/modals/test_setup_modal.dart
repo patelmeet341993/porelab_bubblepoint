@@ -6,19 +6,19 @@ class TestSetupModal{
   String materialApplication;
   String materialTypeCard;
   String shapeType;
-  int  materialType;
+ String materialType;
   String turtosity;
   String sizeType;
   String thickness;
-  String wettingFluid;
+  Map wettingFluid;
   String bubblePointType;
   double bubblePoint;
   double testPressureone;
   double  testPressuretwo;
 
   TestSetupModal({
-    this.sampleProfile='',this.lotNumber='',this.industryType='',this.materialApplication='',this.materialTypeCard='',this.shapeType='',
-    this.materialType=0,this.turtosity='',this.sizeType='',this.thickness='',this.wettingFluid='',this.bubblePointType='',this.bubblePoint=0.0,
+    this.sampleProfile='',this.lotNumber='',this.industryType='Select Industry Type',this.materialApplication='',this.materialTypeCard='',this.shapeType='',
+    this.materialType='Hydrophilic',this.turtosity='',this.sizeType='',this.thickness='',this.wettingFluid=const {},this.bubblePointType='',this.bubblePoint=0.0,
     this.testPressureone=0.0,this.testPressuretwo=0.0
   });
 
@@ -34,11 +34,11 @@ class TestSetupModal{
     String materialApplication;
     String materialTypeCard;
     String shapeType;
-    int  materialType;
+    String  materialType;
     String turtosity;
     String sizeType;
     String thickness;
-    String wettingFluid;
+    Map wettingFluid;
     String bubblePointType;
     double bubblePoint;
     double testPressureone;
@@ -49,11 +49,11 @@ class TestSetupModal{
     materialApplication=map['materialApplication']??"";
     materialTypeCard=map['materialTypeCard']??"";
     shapeType=map['shapeType']??"";
-    materialType=map['materialType']??0;
+    materialType=map['materialType']??'Hydrophilic';
     turtosity=map['turtosity']??"";
     sizeType=map['sizeType']??"";
     thickness=map['thickness']??"";
-    wettingFluid=map['wettingFluid']??"";
+    wettingFluid=map['wettingFluid']??{};
     bubblePointType=map['bubblePointType']??"";
     bubblePoint=map['bubblePoint']??0.0;
     testPressureone = double.tryParse(map['testPressureone'].toString()) ?? 0.0;

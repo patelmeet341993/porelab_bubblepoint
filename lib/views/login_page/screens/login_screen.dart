@@ -24,6 +24,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState(){
     HiveManager().initMethodHive();
+
+
     super.initState();
   }
 

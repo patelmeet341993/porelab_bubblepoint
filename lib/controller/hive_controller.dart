@@ -20,4 +20,10 @@ class HiveController {
     return firstBox;
 
   }
+  Future<Box<Map>> initialHivetwo()async{
+    Box<Map> dropDownBox;
+    dropDownBox = await HiveManager().initHivetwo();
+    return dropDownBox;
+
+  }
 }

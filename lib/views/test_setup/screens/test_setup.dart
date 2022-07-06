@@ -6,6 +6,7 @@ import 'package:porelab_bubblepoint/config/app_colors.dart';
 import 'package:porelab_bubblepoint/config/common_text.dart';
 import 'package:porelab_bubblepoint/controller/provider/test_setup_provider.dart';
 import 'package:porelab_bubblepoint/modals/test_setup_modal.dart';
+import 'package:porelab_bubblepoint/utils/hive_manager.dart';
 import 'package:porelab_bubblepoint/views/commons/common_dropdown.dart';
 import 'package:porelab_bubblepoint/views/commons/common_radio.dart';
 import 'package:porelab_bubblepoint/views/commons/common_textandtextfeild.dart';
@@ -14,6 +15,7 @@ import 'package:porelab_bubblepoint/views/commons/dashboard_top_header.dart';
 import 'package:provider/provider.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:touch_ripple_effect/touch_ripple_effect.dart';
+import '../../../config/constants.dart';
 import '../../../controller/hive_controller.dart';
 import '../../../hive.dart';
 import '../../commons/common_textfeildwith_gradient.dart';
@@ -121,19 +123,39 @@ class _TestSetupState extends State<TestSetup> {
   String bubblePointCardText='First Bubble';
 
   String materialAppilcation= '';
-  String  wettingFluids='Water:72.0';
-  List<String>  wettingFluidsItems=[
+  // Map<String,String> wettingFluids={};
+  String wettingFluids = "Water";
+  // List<String>  wettingFluidsItems=[
+  //   'Add Fluid',
+  //   'Water:72.0',
+  //   'MineralOil:34.7',
+  //   'PetroleumDistillate:30.0',
+  //   'DenaturedAlcohol:22.3',
+  //   'Porewick:16.0',
+  //   'Galwick:15.9',
+  // ];
 
-      'Add Fluid',
-      'Water:72.0',
-      'MineralOil:34.7',
-      'PetroleumDistillate:30.0',
-      'DenaturedAlcohol:22.3',
-     'Porewick:16.0',
-     'Galwick:15.9',
-  ];
+  Map<String,String> wettingFluidsItems ={
+    "AddFluid":"0.0",
+    "Water":"72.0",
+    "MineralOil":"34.7",
+    "PetroleumDistillate":"30.0",
+    "DenaturedAlcohol":"22.3",
+    "Porewick":"16.0",
+    "Galwick":"15.9",
+  };
 
-  int materialType=1;
+  Map<String,String> wettingFluidsItemsTwo ={
+    "AddFluid":"0.0",
+    "Water":"72.0",
+    "MineralOil":"34.7",
+    "PetroleumDistillate":"30.0",
+    "DenaturedAlcohol":"22.3",
+    "Porewick":"16.0",
+    "Galwick":"15.9",
+  };
+
+  String materialType='Hydrophilic';
 
   final tortusityKey = GlobalKey<FormState>();
   final sizeKey = GlobalKey<FormState>();
@@ -143,7 +165,7 @@ class _TestSetupState extends State<TestSetup> {
 
   TextEditingController sampleProfileController=TextEditingController();
   TextEditingController lotNumberController=TextEditingController();
-  TextEditingController enterRangeController=TextEditingController();
+  TextEditingController turtosityController=TextEditingController();
   TextEditingController thicknessController=TextEditingController();
   TextEditingController testPressureFirstValueController=TextEditingController();
   TextEditingController testPressureSecondValueController=TextEditingController();
@@ -152,14 +174,13 @@ class _TestSetupState extends State<TestSetup> {
 
   TestSetupModal testSetupModal=TestSetupModal();
 
-  int select=0;
-  int selectt=0;
-  int sizeSelect=0;
+
+
   int bubblepointselect=0;
   double currentSliderValue=0;
   double currentSliderValue2=0;
 
-  Box<Map>? firstBox;
+  Box<Map>? firstBox,dropDownBox;
 
   Widget update(Pages  pages){
     if(pages==Pages.SampleIdWholePage){
@@ -190,7 +211,6 @@ class _TestSetupState extends State<TestSetup> {
       return Container();
     }
   }
-
 
   Widget imageUpdate(double value){
     if(value==0.1){
@@ -227,11 +247,25 @@ class _TestSetupState extends State<TestSetup> {
       return Image.asset("assets/common/0.1 n.png",height: 300,width: 450,);
     }
   }
+
+  void getDropDownData() async {
+    dropDownBox = await HiveController().initialHivetwo();
+    // dropDownBox!.clear();
+    // Map? value = dropDownBox!.get(dropDownBoxKey);
+    dropDownBox!.values.forEach((element) {
+      wettingFluidsItemsTwo.addAll(Map.castFrom<dynamic,dynamic,String,String>(element));
+    });
+
+    // wettingFluidsItemsTwo.addAll(Map.castFrom<dynamic,dynamic,String,String>(value!));
+    print("dropdownmenu $dropDownBox");
+  }
+
   void getTestSetList()async{
     sampleId = null;
-
     firstBox = await HiveController().initialHive();
+    // firstBox!.clear();
     Map<dynamic,Map<dynamic, dynamic>> map =firstBox!.toMap();
+    // print("Value:${value}, Type:${value.runtimeType}");
 
     map.forEach((key, value) {
       // print("Key:${key}, Type:${key.runtimeType}");
@@ -250,17 +284,38 @@ class _TestSetupState extends State<TestSetup> {
       }
     });
     sampleId = sampleIdItems.keys.first;
-    print("length:${sampleIdItems.keys.first.runtimeType}");
+   // print("length:${sampleIdItems.keys.first.runtimeType}");
+    setState((){});
+  }
+
+  void getsetData(TestSetupModal tSM){
+    sampleProfileController.text=tSM.sampleProfile;
+    lotNumberController.text=tSM.lotNumber;
+    industryTypes=tSM.industryType;
+    materialAppilcation=tSM.materialApplication;
+    materialCardext=tSM.materialTypeCard;
+    shapeCardext=tSM.shapeType;
+    materialType=tSM.materialType;
+    turtosityController.text=tSM.turtosity;
+    sizeCardext=tSM.sizeType;
+    thicknessController.text=tSM.thickness;
+    // wettingFluids=tSM.wettingFluid;
+    bubblePointCardText=tSM.bubblePointType;
+    currentSliderValue2=tSM.bubblePoint;
+    testPressureFirstValueController.text=tSM.testPressureone.toString();
+    testPressureSecondValueController.text=tSM.testPressuretwo.toString();
     setState((){});
   }
 
   @override
   void initState(){
+    sampleIdItems["select Project"]=TestSetupModal();
     materialAppilcation =myMap["Select Industry Type"]?.first ??'';
     getTestSetList();
-    //wettingFluids='Select Fluid';
-  }
+    getDropDownData();
 
+
+  }
   @override
   Widget build(BuildContext context) {
     TestSetupProvider testSetupProvider=Provider.of<TestSetupProvider>(context);
@@ -392,9 +447,7 @@ class _TestSetupState extends State<TestSetup> {
         Expanded(
           flex: 1,
           child: Container(
-
             padding: EdgeInsets.only(left: 250),
-
             child: Column(
               children: [
                 Row(
@@ -447,9 +500,11 @@ class _TestSetupState extends State<TestSetup> {
                                   return DropdownMenuItem<String>(child: Text("${e.key}"), value: e.key,);
                                 }).toList(),
                                 onChanged:  (newValue) {
+
                                   setState(() {
-                                    print("runtime type: ${newValue.runtimeType}");
-                                    // sampleId = newValue!;
+                                    //print("runtime type: ${newValue.runtimeType}");
+                                    sampleId = newValue!;
+                                    getsetData(sampleIdItems[sampleId] ?? TestSetupModal());
                                   });
                                 },
                             ),
@@ -614,7 +669,7 @@ class _TestSetupState extends State<TestSetup> {
     );
   }
 
-  Widget getMaterialCard({ required String  text, Function() ? onTap, int Selected=0,required String url}){
+  Widget getMaterialCard({ required String  text, Function() ? onTap,required String url,}){
     return GestureDetector(
       onTap: (){
         onTap!();
@@ -627,7 +682,7 @@ class _TestSetupState extends State<TestSetup> {
         padding: EdgeInsets.symmetric(horizontal: 10,vertical: 40),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
-            color: select==Selected ? AppColors.lightBlueColor:AppColors.whiteColor
+            color: materialCardext==text ? AppColors.lightBlueColor:AppColors.whiteColor
         ),
         child:Column(
           children: [
@@ -651,30 +706,30 @@ class _TestSetupState extends State<TestSetup> {
            mainAxisAlignment: MainAxisAlignment.center,
            children: [
              getMaterialCard(url:"assets/common/fibrous.png",text: 'Fibrous',onTap: (){
-               select=0;
+               materialCardext;
                setState((){
                });
-             },Selected:0),
+             }),
              getMaterialCard(url:"assets/common/coated.png",text: 'Coated',onTap: (){
-                select=1;
+               materialCardext;
                 setState((){
                 });
-                },Selected:1),
+                },),
              getMaterialCard(url:"assets/common/consolidate.png",text: 'Consolidate',onTap: (){
-             select=2;
+               materialCardext;
              setState((){
              });
-             },Selected:2),
+             }),
              getMaterialCard(url:"assets/common/laminated.png",text: 'Laminated',onTap: (){
-              select=3;
+               materialCardext;
               setState((){
               });
-              },Selected:3),
+              }),
              getMaterialCard(url:"assets/common/m1_5.png",text: 'Unknown',onTap: (){
-              select=4;
+               materialCardext;
               setState((){
               });
-              },Selected:4)
+              })
            ],
          ),
           SizedBox(height: 98,),
@@ -705,7 +760,7 @@ class _TestSetupState extends State<TestSetup> {
     );
   }
 
-  Widget getShapeCard({  required String  text, Function() ? onTap, int Selected=0,required String url}){
+  Widget getShapeCard({  required String  text, Function() ? onTap,required String url}){
     return GestureDetector(
       onTap: (){
         onTap!();
@@ -718,7 +773,7 @@ class _TestSetupState extends State<TestSetup> {
         padding: EdgeInsets.symmetric(horizontal: 10,vertical: 40),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
-            color: selectt==Selected ? AppColors.lightBlueColor:AppColors.whiteColor
+            color: shapeCardext==text ? AppColors.lightBlueColor:AppColors.whiteColor
         ),
         child:Column(
           children: [
@@ -743,46 +798,47 @@ class _TestSetupState extends State<TestSetup> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               getShapeCard(text: 'Triangular',onTap: (){
-                selectt=0;
+
                 setState((){
                 });
-              },Selected:0,url: "assets/common/t.png"),
+              },url: "assets/common/t.png"),
 
               getShapeCard(text: 'Rectangular',onTap: (){
-                selectt=1;
+
                 setState((){
                 });
-              },Selected:1,url: "assets/common/rectangular.png"),
+              },url: "assets/common/rectangular.png"),
 
               getShapeCard(text: 'Circle',onTap: (){
-                selectt=2;
+                // selectt=2;
                 setState((){
                 });
-              },Selected:2,url: "assets/common/circular .png"),
+              },
+                  url: "assets/common/circular .png"),
 
               getShapeCard(text: 'Elliptical',onTap: (){
-                selectt=3;
+                // selectt=3;
                 setState((){
                 });
-              },Selected:3,url: "assets/common/elliptical .png"),
+              },url: "assets/common/elliptical .png"),
 
               getShapeCard(text: 'Square',onTap: (){
-                selectt=4;
+                // selectt=4;
                 setState((){
                 });
-              },Selected:4,url: "assets/common/square.png"),
+              },url: "assets/common/square.png"),
 
               getShapeCard(text: 'Slit',onTap: (){
-                selectt=5;
+                // selectt=5;
                 setState((){
                 });
-              },Selected:5,url: "assets/common/slit .png",),
+              },url: "assets/common/slit .png",),
 
               getShapeCard(text: 'Unknown',onTap: (){
-                selectt=6;
+                // selectt=6;
                 setState((){
                 });
-              },Selected:6,url: "assets/common/m1_5.png")
+              },url: "assets/common/m1_5.png")
 
             ],
           ),
@@ -794,7 +850,7 @@ class _TestSetupState extends State<TestSetup> {
                 CommonText(text: 'MATERIAL TYPE',fontSize:25 ,),
                 SizedBox(width: 20,),
                 Expanded(
-                  child: CommonRadio(onChanged:  (int ? value){
+                  child: CommonRadio(onChanged:  (String ? value){
                     setState(() {
                       materialType = value!;
                       // if(materialType==1)
@@ -808,8 +864,6 @@ class _TestSetupState extends State<TestSetup> {
                       //   else{
                       //   print('Unknown');
                       // }
-
-
                     });
                   }, valued: materialType, text1: 'Hydrophilic', text2: 'Hydrophobic', text3: 'Unknown'),
                 ),
@@ -834,6 +888,8 @@ class _TestSetupState extends State<TestSetup> {
               CustomButtom(text: 'NEXT',
                 ontap: (){
                   testSetupModal.shapeType=shapeCardext;
+                  testSetupModal.materialType=materialType;
+
                   selectedEnum=Pages.TortusityPage;
                   setState((){
 
@@ -905,12 +961,12 @@ class _TestSetupState extends State<TestSetup> {
                                       inactiveColor: AppColors.whiteColor,
                                       thumbColor: AppColors.blackColor,
                                       // label: currentSliderValue.round().toString(),
-                                      label: enterRangeController.text,
+                                      label: turtosityController.text,
                                       // label: enterRangeController.text,
                                        onChanged: (double value) {
                                          setState(() {
                                             currentSliderValue = value;
-                                           enterRangeController.text = value.toString();
+                                            turtosityController.text = value.toString();
 
                                          });
                                        },
@@ -949,7 +1005,7 @@ class _TestSetupState extends State<TestSetup> {
                                  setState(() {});
                                },
                                keyboardType:TextInputType.number,
-                               controller: enterRangeController,
+                               controller: turtosityController,
                                inputFormatters: [
                                  FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
                                  TextInputFormatter.withFunction((oldValue, newValue) {
@@ -1011,13 +1067,13 @@ class _TestSetupState extends State<TestSetup> {
                     if (tortusityKey.currentState!.validate()) {
 
                       tortusityKey.currentState!.save();
-                      if(!(0<=double.parse(enterRangeController.text)&&double.parse(enterRangeController.text)<=1)){
+                      if(!(0<=double.parse(turtosityController.text)&&double.parse(turtosityController.text)<=1)){
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('error')),
                         );
                       }
                       else{
-                        testSetupModal.turtosity=enterRangeController.text;
+                        testSetupModal.turtosity=turtosityController.text;
                         selectedEnum=Pages.SizePage;
                       }
                     }
@@ -1046,7 +1102,7 @@ class _TestSetupState extends State<TestSetup> {
         padding: EdgeInsets.symmetric(horizontal: 10,vertical: 40),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
-            color: sizeSelect==Selected ? AppColors.lightBlueColor:AppColors.whiteColor
+            color: sizeCardext==text ? AppColors.lightBlueColor:AppColors.whiteColor
         ),
         child:Column(
           children: [
@@ -1077,17 +1133,17 @@ class _TestSetupState extends State<TestSetup> {
                     mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     getSizeCard(text: 'Small',onTap: (){
-                      sizeSelect=0;
+
                       setState((){
                       });
                     },Selected:0,url: "assets/common/small.png"),
                     getSizeCard(text: 'Medium',onTap: (){
-                      sizeSelect=1;
+                      // sizeSelect=1;
                       setState((){
                       });
                     },Selected:1,url: "assets/common/small.png"),
                     getSizeCard(text: 'Large',onTap: (){
-                      sizeSelect=2;
+                      // sizeSelect=2;
                       setState((){
                       });
                     },Selected:2,url: "assets/common/large.png"),
@@ -1133,23 +1189,38 @@ class _TestSetupState extends State<TestSetup> {
                         CommonText(text: "Select Wetting Fluid",fontSize: 25,),
                         Row(
                           children: [
-                            CommonDropDown(width:400,dropdownvalue: wettingFluids, items: wettingFluidsItems, onChanged: (String? newValue) {
+                            CommonDropDown2(width:400,dropdownvalue: wettingFluids, items: wettingFluidsItemsTwo.map((e,_){
+                              return MapEntry(
+                                e,
+                                 DropdownMenuItem(
+                                  value: e,
+                                    child: Container(
+                                  child: Text("$e : $_"),
+                                )),
+                              );
+                            }).values.toList(),
+                            onChanged: (newValue) {
                               setState(() {
+                                print("new value: ${newValue}");
                                 wettingFluids = newValue!;
                               });}),
                              SizedBox(width: 15,),
-                            wettingFluids=='Add Fluid'? InkWell(
-                                onTap: (){
-                                  wettingFluidsItems.removeLast();
-                                  setState((){
 
-                                  });
+                            !wettingFluidsItems.containsKey(wettingFluids)  ? InkWell(
+                                onTap: (){
+                                  wettingFluidsItems.remove(wettingFluids);
+                                  wettingFluidsItemsTwo.remove(wettingFluids);
+                                  wettingFluids = wettingFluidsItemsTwo.keys.first;
+                                  // dropDown
+                                  // print('object ${wettingFluidsItems.toString()}');
+                                  // getDropDownData();
+                                  setState((){});
                                 },
                                 child: Icon(Icons.delete,color: AppColors.lightBlueColor,)):Container()
                           ],
                         ),
                          SizedBox(height: 20,),
-                         wettingFluids=='Add Fluid'?
+                         wettingFluids== "AddFluid"?
                          Row(
                            children: [
                              CommonTextfeildwithGradient(
@@ -1177,10 +1248,15 @@ class _TestSetupState extends State<TestSetup> {
                              CustomButtom(text: 'Add',
                                ontap: (){
                                 print('object');
-                                wettingFluidsItems.add("${addFluidNameController.text}:${addFluidValueController.text}");
-                                wettingFluids="${addFluidNameController.text}:${addFluidValueController.text}";
-                                 setState((){
+                                wettingFluidsItemsTwo.addEntries([
+                                  MapEntry(addFluidNameController.text,addFluidValueController.text),
+                                ]);
+                                wettingFluids="${addFluidNameController.text}";
 
+                                dropDownBox!.addAll([{addFluidNameController.text.trim():addFluidValueController.text.trim()}]);
+                                // dropDownBox!.put(dropDownBoxKey, {addFluidNameController.text.trim():addFluidValueController.text.trim()});
+                                // dropDownBox!.add({dropDownBoxKey:{addFluidNameController.text:addFluidValueController.text}});
+                                 setState((){
                                  });
                                },),
 
@@ -1215,7 +1291,7 @@ class _TestSetupState extends State<TestSetup> {
                     else{
                       testSetupModal.sizeType =sizeCardext;
                       testSetupModal.thickness =thicknessController.text;
-                      testSetupModal.wettingFluid =wettingFluids;
+                      // testSetupModal.wettingFluid =wettingFluids;
 
                       selectedEnum=Pages.SelectBubblePoint;
                       // showDialog(context: context, builder: (context) =>DailogBox());
@@ -1234,7 +1310,7 @@ class _TestSetupState extends State<TestSetup> {
     );
   }
 
-  Widget getBubblePointCard({  required String  text, Function() ? onTap, int Selectedd=0,required String url}){
+  Widget getBubblePointCard({  required String  text, Function() ? onTap,required String url}){
     return GestureDetector(
       onTap: (){
         onTap!();
@@ -1246,7 +1322,7 @@ class _TestSetupState extends State<TestSetup> {
         padding: EdgeInsets.symmetric(horizontal: 10,vertical: 40),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
-            color: bubblepointselect==Selectedd ? AppColors.lightBlueColor:AppColors.whiteColor
+            color: bubblePointCardText==text ? AppColors.lightBlueColor:AppColors.whiteColor
         ),
         child:Column(
           children: [
@@ -1269,20 +1345,19 @@ class _TestSetupState extends State<TestSetup> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               getBubblePointCard(url:"assets/common/First bubble.png",text: 'First Bubble',onTap: (){
-                bubblepointselect=0;
+
                 setState((){
                 });
-              },Selectedd:0,),
+              }),
               getBubblePointCard(url:"assets/common/moderate n.png",text: 'Moderate',onTap: (){
-                bubblepointselect=1;
-                setState((){
+                bubblepointselect=1; setState((){
                 });
-              },Selectedd:1),
+              }),
               getBubblePointCard(url:"assets/common/continous.png",text: 'Countinous',onTap: (){
-                bubblepointselect=2;
+
                 setState((){
                 });
-              },Selectedd:2),
+              }),
 
             ],
           ),

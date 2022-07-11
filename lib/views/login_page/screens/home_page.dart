@@ -3,11 +3,11 @@ import 'package:hive/hive.dart';
 import 'package:porelab_bubblepoint/config/app_colors.dart';
 import 'package:porelab_bubblepoint/config/common_text.dart';
 import 'package:porelab_bubblepoint/controller/hive_controller.dart';
-import 'package:porelab_bubblepoint/folder_structure/folder_structure.dart';
 import 'package:porelab_bubblepoint/views/commons/common_logo_container.dart';
 import 'package:porelab_bubblepoint/views/commons/custom_smallbutton.dart';
 import 'package:porelab_bubblepoint/views/commons/topheader.dart';
 import 'package:porelab_bubblepoint/views/settings_screens/screens/system%20_config.dart';
+import 'package:porelab_bubblepoint/views/test_setup/screens/grap_file.dart';
 import 'package:porelab_bubblepoint/views/test_setup/screens/test_setup.dart';
 import 'package:provider/provider.dart';
 import 'package:touch_ripple_effect/touch_ripple_effect.dart';
@@ -17,6 +17,7 @@ import '../../../hive.dart';
 import '../../../modals/bubblePointModel.dart';
 import '../../commons/custom_container.dart';
 import '../../commons/dashboard_top_header.dart';
+import '../../folder_structure/folder_structure.dart';
 import '../../graphs/graph_view_page.dart';
 import '../../quick_test/screens/quick_test.dart';
 class HomePage extends StatefulWidget {
@@ -136,7 +137,12 @@ class _HomePageState extends State<HomePage> {
                       url: "assets/common/icon 5.png"),
                   SizedBox(width: 110,),
                   CommonLogoContainer(
-                      onTap: (){},
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => GraphPage()),
+                        );
+                      },
                       url: "assets/common/icon 6.png"),
                 ],
               )

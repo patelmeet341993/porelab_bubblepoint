@@ -125,15 +125,7 @@ class _TestSetupState extends State<TestSetup> {
   String materialAppilcation= '';
   // Map<String,String> wettingFluids={};
   String wettingFluids = "Water";
-  // List<String>  wettingFluidsItems=[
-  //   'Add Fluid',
-  //   'Water:72.0',
-  //   'MineralOil:34.7',
-  //   'PetroleumDistillate:30.0',
-  //   'DenaturedAlcohol:22.3',
-  //   'Porewick:16.0',
-  //   'Galwick:15.9',
-  // ];
+
 
   Map<String,String> wettingFluidsItems ={
     "AddFluid":"0.0",
@@ -171,11 +163,7 @@ class _TestSetupState extends State<TestSetup> {
   TextEditingController testPressureSecondValueController=TextEditingController();
   TextEditingController addFluidNameController=TextEditingController();
   TextEditingController addFluidValueController=TextEditingController();
-
   TestSetupModal testSetupModal=TestSetupModal();
-
-
-
   int bubblepointselect=0;
   double currentSliderValue=0;
   double currentSliderValue2=0;
@@ -284,7 +272,7 @@ class _TestSetupState extends State<TestSetup> {
       }
     });
     sampleId = sampleIdItems.keys.first;
-   // print("length:${sampleIdItems.keys.first.runtimeType}");
+    // print("length:${sampleIdItems.keys.first.runtimeType}");
     setState((){});
   }
 
@@ -299,7 +287,7 @@ class _TestSetupState extends State<TestSetup> {
     turtosityController.text=tSM.turtosity;
     sizeCardext=tSM.sizeType;
     thicknessController.text=tSM.thickness;
-    // wettingFluids=tSM.wettingFluid;
+    wettingFluids=tSM.wettingFluid.keys.first;
     bubblePointCardText=tSM.bubblePointType;
     currentSliderValue2=tSM.bubblePoint;
     testPressureFirstValueController.text=tSM.testPressureone.toString();
@@ -309,6 +297,7 @@ class _TestSetupState extends State<TestSetup> {
 
   @override
   void initState(){
+    curentStep=12;
     sampleIdItems["select Project"]=TestSetupModal();
     materialAppilcation =myMap["Select Industry Type"]?.first ??'';
     getTestSetList();
@@ -324,7 +313,7 @@ class _TestSetupState extends State<TestSetup> {
     }
     return SafeArea(
       child: Scaffold(
-        body: getbody()
+          body: getbody()
       ),
     );
   }
@@ -335,7 +324,7 @@ class _TestSetupState extends State<TestSetup> {
         SizedBox(height: 60,),
         getProgressIndicator(),
         SizedBox(height: 100,),
-       update(selectedEnum)
+        update(selectedEnum)
 
       ],
     );
@@ -362,7 +351,7 @@ class _TestSetupState extends State<TestSetup> {
     );
   }
 
-   int curentStep =0;
+  int curentStep =0;
 
   Widget getProgressIndicator(){
     return Stack(
@@ -386,7 +375,7 @@ class _TestSetupState extends State<TestSetup> {
             currentStep: curentStep,
             size: 50,
             padding: 0,
-            // selectedColor: Colors.yellow,
+            selectedColor: Colors.yellow,
             unselectedColor: AppColors.blackColor,
             roundedEdges: Radius.circular(10),
             selectedGradientColor: LinearGradient(
@@ -396,9 +385,9 @@ class _TestSetupState extends State<TestSetup> {
             ),
           ),
         ),
-       getPositionedCircle(190),
-        getPositionedCircle(760),
-        getPositionedCircle(1290),
+        getPositionedCircle(190,0),
+        getPositionedCircle(760,60),
+        getPositionedCircle(1290,100),
       ],
     );
   }
@@ -425,14 +414,14 @@ class _TestSetupState extends State<TestSetup> {
                       );
                     }
                     else{
-
+                      curentStep=24;
                       testSetupModal.sampleProfile=sampleProfileController.text;
                       testSetupModal.lotNumber=lotNumberController.text;
-                       selectedEnum=Pages.IndustryTypePage;
+                      selectedEnum=Pages.IndustryTypePage;
                     }
                     setState((){
                     });
-                },)
+                  },)
               ],
             )
           ],
@@ -487,26 +476,26 @@ class _TestSetupState extends State<TestSetup> {
                           ),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
-                                style:  TextStyle(
-                                  color: AppColors.whiteColor,
-                                  fontSize: 16,
-                                ),
-                                isExpanded: true,
-                                dropdownColor: AppColors.blackColor,
-                                value: sampleId,
-                                icon: Icon(Icons.keyboard_arrow_down,color: AppColors().buttonColor,),
-                                // items: sampleIdItems
-                                items: sampleIdItems.entries.map((MapEntry e) {
-                                  return DropdownMenuItem<String>(child: Text("${e.key}"), value: e.key,);
-                                }).toList(),
-                                onChanged:  (newValue) {
+                              style:  TextStyle(
+                                color: AppColors.whiteColor,
+                                fontSize: 16,
+                              ),
+                              isExpanded: true,
+                              dropdownColor: AppColors.blackColor,
+                              value: sampleId,
+                              icon: Icon(Icons.keyboard_arrow_down,color: AppColors().buttonColor,),
+                              // items: sampleIdItems
+                              items: sampleIdItems.entries.map((MapEntry e) {
+                                return DropdownMenuItem<String>(child: Text("${e.key}"), value: e.key,);
+                              }).toList(),
+                              onChanged:  (newValue) {
 
-                                  setState(() {
-                                    //print("runtime type: ${newValue.runtimeType}");
-                                    sampleId = newValue!;
-                                    getsetData(sampleIdItems[sampleId] ?? TestSetupModal());
-                                  });
-                                },
+                                setState(() {
+                                  //print("runtime type: ${newValue.runtimeType}");
+                                  sampleId = newValue!;
+                                  getsetData(sampleIdItems[sampleId] ?? TestSetupModal());
+                                });
+                              },
                             ),
                           ),
                         )
@@ -519,12 +508,12 @@ class _TestSetupState extends State<TestSetup> {
                   children: [
                     Expanded(
                         child: CommonTextWithTextfeild(text: 'Sample profile', title: 'Sample profile', controller: sampleProfileController,
-                        validator:(value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },)
+                          validator:(value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },)
                     ),
                   ],
                 ),
@@ -584,9 +573,9 @@ class _TestSetupState extends State<TestSetup> {
     );
   }
 
-  Widget getPositionedCircle(double left){
+  Widget getPositionedCircle(double left,int circlePosition){
     return  Positioned(
-       left: left,
+        left: left,
         top: -7,
         child:
         Container(
@@ -603,7 +592,14 @@ class _TestSetupState extends State<TestSetup> {
           ),
           height: 60,
           width: 60,
-
+          child:Container(
+            margin: EdgeInsets.all(10),
+            height: 40,width: 40,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color :  curentStep >= circlePosition?AppColors.lightBlueColor:Colors.transparent
+            ),
+          ),
         ));
   }
 
@@ -620,7 +616,7 @@ class _TestSetupState extends State<TestSetup> {
                   margin: EdgeInsets.only(right: 600),
                   padding: EdgeInsets.only(left: 250),
                   child: Column(
-                    children: [
+                      children: [
                         CommonTextWithDropDown(dropdownvalue: industryTypes, items: myMap.keys.toList(), title: 'Industry Type', onChanged:
                             (String? newValue) {
                           setState(() {
@@ -628,14 +624,14 @@ class _TestSetupState extends State<TestSetup> {
                             materialAppilcation = myMap[industryTypes]?.first ?? '';
                           });
                         }),
-                      SizedBox(height: 20,),
-                      CommonTextWithDropDown(dropdownvalue: materialAppilcation, items: myMap[industryTypes] ?? [], title: 'Material Application', onChanged:
-                          (String? newValue) {
-                        setState(() {
-                          materialAppilcation = newValue!;
-                        });
-                      }),
-                    ]
+                        SizedBox(height: 20,),
+                        CommonTextWithDropDown(dropdownvalue: materialAppilcation, items: myMap[industryTypes] ?? [], title: 'Material Application', onChanged:
+                            (String? newValue) {
+                          setState(() {
+                            materialAppilcation = newValue!;
+                          });
+                        }),
+                      ]
                   ),
                 ),
               ),
@@ -648,6 +644,7 @@ class _TestSetupState extends State<TestSetup> {
             children: [
               CustomButtom(text: 'BACK',
                 ontap: (){
+                  curentStep=12;
                   selectedEnum=Pages.SampleIdWholePage;
                   setState((){
 
@@ -656,6 +653,7 @@ class _TestSetupState extends State<TestSetup> {
               SizedBox(width: 40,),
               CustomButtom(text: 'NEXT',
                 ontap: (){
+                  curentStep=36;
                   testSetupModal.industryType=industryTypes;
                   testSetupModal.materialApplication=materialAppilcation;
                   selectedEnum=Pages.MaterialTypePage;
@@ -702,42 +700,43 @@ class _TestSetupState extends State<TestSetup> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-         Row(
-           mainAxisAlignment: MainAxisAlignment.center,
-           children: [
-             getMaterialCard(url:"assets/common/fibrous.png",text: 'Fibrous',onTap: (){
-               materialCardext;
-               setState((){
-               });
-             }),
-             getMaterialCard(url:"assets/common/coated.png",text: 'Coated',onTap: (){
-               materialCardext;
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              getMaterialCard(url:"assets/common/fibrous.png",text: 'Fibrous',onTap: (){
+                materialCardext;
                 setState((){
                 });
-                },),
-             getMaterialCard(url:"assets/common/consolidate.png",text: 'Consolidate',onTap: (){
-               materialCardext;
-             setState((){
-             });
-             }),
-             getMaterialCard(url:"assets/common/laminated.png",text: 'Laminated',onTap: (){
-               materialCardext;
-              setState((){
-              });
               }),
-             getMaterialCard(url:"assets/common/m1_5.png",text: 'Unknown',onTap: (){
-               materialCardext;
-              setState((){
-              });
+              getMaterialCard(url:"assets/common/coated.png",text: 'Coated',onTap: (){
+                materialCardext;
+                setState((){
+                });
+              },),
+              getMaterialCard(url:"assets/common/consolidate.png",text: 'Consolidate',onTap: (){
+                materialCardext;
+                setState((){
+                });
+              }),
+              getMaterialCard(url:"assets/common/laminated.png",text: 'Laminated',onTap: (){
+                materialCardext;
+                setState((){
+                });
+              }),
+              getMaterialCard(url:"assets/common/m1_5.png",text: 'Unknown',onTap: (){
+                materialCardext;
+                setState((){
+                });
               })
-           ],
-         ),
+            ],
+          ),
           SizedBox(height: 98,),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               CustomButtom(text: 'BACK',
                 ontap: (){
+                  curentStep=24;
                   selectedEnum=Pages.IndustryTypePage;
                   setState((){
 
@@ -746,6 +745,7 @@ class _TestSetupState extends State<TestSetup> {
               SizedBox(width: 40,),
               CustomButtom(text: 'NEXT',
                 ontap: (){
+                  curentStep=48;
                   testSetupModal.materialTypeCard=materialCardext;
                   selectedEnum=Pages.ShapeTypePage;
                   setState((){
@@ -867,9 +867,9 @@ class _TestSetupState extends State<TestSetup> {
                     });
                   }, valued: materialType, text1: 'Hydrophilic', text2: 'Hydrophobic', text3: 'Unknown'),
                 ),
-      Expanded(
-            flex: 1,
-            child: Container())
+                Expanded(
+                    flex: 1,
+                    child: Container())
               ],
             ),
           ),
@@ -879,6 +879,7 @@ class _TestSetupState extends State<TestSetup> {
             children: [
               CustomButtom(text: 'BACK',
                 ontap: (){
+                  curentStep=36;
                   selectedEnum=Pages.MaterialTypePage;
                   setState((){
 
@@ -887,6 +888,7 @@ class _TestSetupState extends State<TestSetup> {
               SizedBox(width: 40,),
               CustomButtom(text: 'NEXT',
                 ontap: (){
+                  curentStep=60;
                   testSetupModal.shapeType=shapeCardext;
                   testSetupModal.materialType=materialType;
 
@@ -904,158 +906,159 @@ class _TestSetupState extends State<TestSetup> {
     );
   }
 
-   Widget getTortusityPage(){
+  Widget getTortusityPage(){
     return Form(
       key:tortusityKey ,
       child: Container(
-       // color: Colors.red,
+        // color: Colors.red,
         child:Column(
           children: [
-          Row(
-            children: [
-             Expanded(
-                 child: Container(
-                   child: Column(
-               children: [
-                   ClipRRect(
-              borderRadius: BorderRadius.circular(30),
-                     child: Container(
-                         decoration: BoxDecoration(
+            Row(
+              children: [
+                Expanded(
+                    child: Container(
+                      child: Column(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(30),
+                            child: Container(
+                                decoration: BoxDecoration(
 
-                           borderRadius: BorderRadius.circular(30)
-                         ),
-                         child:  imageUpdate(currentSliderValue)),
-                   )
-               ],
+                                    borderRadius: BorderRadius.circular(30)
+                                ),
+                                child:  imageUpdate(currentSliderValue)),
+                          )
+                        ],
 
-             ),
-                 )
-             ),
-             Expanded(
-                 child: Container(
-                   height: 300,
-                   margin: EdgeInsets.symmetric(horizontal: 20),
-                   child: Column(
-                     crossAxisAlignment: CrossAxisAlignment.start,
-                     children: [
-                       CommonText(text: 'What is the Turtosity Factor Of Trial ?',color: AppColors.whiteColor,fontSize: 25,),
-                       SizedBox(height: 20,),
-                       Container(
-                         padding: EdgeInsets.symmetric(horizontal: 10),
-                         decoration: BoxDecoration(
-                             border: Border.all(color: AppColors.whiteColor),
-                           borderRadius: BorderRadius.circular(100),
-                         ),
-                           child:
-                               Row(
-                                 children: [
-                                   Icon(Icons.horizontal_rule,color: AppColors.whiteColor,),
-                                   Expanded(
-                                     child: Slider(
-                                       // value: double.parse(enterRangeController.text),
-                                       value: currentSliderValue,
-                                       min: 0,
-                                       max: 1,
-                                       divisions: 10,
+                      ),
+                    )
+                ),
+                Expanded(
+                    child: Container(
+                      height: 300,
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CommonText(text: 'What is the Turtosity Factor Of Trial ?',color: AppColors.whiteColor,fontSize: 25,),
+                          SizedBox(height: 20,),
+                          Container(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: AppColors.whiteColor),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child:
+                              Row(
+                                children: [
+                                  Icon(Icons.horizontal_rule,color: AppColors.whiteColor,),
+                                  Expanded(
+                                    child: Slider(
+                                      // value: double.parse(enterRangeController.text),
+                                      value: currentSliderValue,
+                                      min: 0,
+                                      max: 1,
+                                      divisions: 10,
                                       activeColor: AppColors.lightBlueColor,
                                       inactiveColor: AppColors.whiteColor,
                                       thumbColor: AppColors.blackColor,
                                       // label: currentSliderValue.round().toString(),
                                       label: turtosityController.text,
                                       // label: enterRangeController.text,
-                                       onChanged: (double value) {
-                                         setState(() {
-                                            currentSliderValue = value;
-                                            turtosityController.text = value.toString();
+                                      onChanged: (double value) {
+                                        setState(() {
+                                          currentSliderValue = value;
+                                          turtosityController.text = value.toString();
 
-                                         });
-                                       },
-                                     ),
-                                   ),
-                                   Icon(Icons.add,color: AppColors.whiteColor,),
-                                 ],
-                               )
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  Icon(Icons.add,color: AppColors.whiteColor,),
+                                ],
+                              )
 
-                         ),
-                       SizedBox(height: 20,),
-                       Row(
-                         children: [
-                           CommonText(text: 'ENTER 0 TO 1'),
-                           SizedBox(width: 20,),
-                           Container(
-                             width: 130,
-                             height: 45,
-                             decoration: BoxDecoration(
-                               color: AppColors.blackColor,
-                                 borderRadius: BorderRadius. circular(100.0),
-                                 boxShadow: [
-                                   BoxShadow(
-                                     color: AppColors.whiteColor.withOpacity(0.2),
-                                     offset:  Offset(
-                                       -2.0,
-                                       -2.0,
-                                     ),
-                                     blurRadius: 1.0,
-                                     spreadRadius: 2.0,
-                                   ),]
-                             ),//BoxS
-                             child: TextFormField(
-                               onChanged: (value){
-                                 currentSliderValue=double.parse(value);
-                                 setState(() {});
-                               },
-                               keyboardType:TextInputType.number,
-                               controller: turtosityController,
-                               inputFormatters: [
-                                 FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
-                                 TextInputFormatter.withFunction((oldValue, newValue) {
-                                   try {
-                                     final text = newValue.text;
-                                     if (text.isNotEmpty) double.parse(text);
-                                     return newValue;
-                                   } catch (e) {}
-                                   return oldValue;
-                                 }),
-                               ],
-                               validator: (value) {
-                                 if (value == null || value.isEmpty) {
-                                   return 'Please enter number';
-                                 }
-                                 return null;
-                               },
+                          ),
+                          SizedBox(height: 20,),
+                          Row(
+                            children: [
+                              CommonText(text: 'ENTER 0 TO 1'),
+                              SizedBox(width: 20,),
+                              Container(
+                                width: 130,
+                                height: 45,
+                                decoration: BoxDecoration(
+                                    color: AppColors.blackColor,
+                                    borderRadius: BorderRadius. circular(100.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppColors.whiteColor.withOpacity(0.2),
+                                        offset:  Offset(
+                                          -2.0,
+                                          -2.0,
+                                        ),
+                                        blurRadius: 1.0,
+                                        spreadRadius: 2.0,
+                                      ),]
+                                ),//BoxS
+                                child: TextFormField(
+                                  onChanged: (value){
+                                    currentSliderValue=double.parse(value);
+                                    setState(() {});
+                                  },
+                                  keyboardType:TextInputType.number,
+                                  controller: turtosityController,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
+                                    TextInputFormatter.withFunction((oldValue, newValue) {
+                                      try {
+                                        final text = newValue.text;
+                                        if (text.isNotEmpty) double.parse(text);
+                                        return newValue;
+                                      } catch (e) {}
+                                      return oldValue;
+                                    }),
+                                  ],
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter number';
+                                    }
+                                    return null;
+                                  },
 
-                               style: TextStyle(color: AppColors.whiteColor),
-                               cursorColor: AppColors.whiteColor,
-                               decoration: InputDecoration(
+                                  style: TextStyle(color: AppColors.whiteColor),
+                                  cursorColor: AppColors.whiteColor,
+                                  decoration: InputDecoration(
 
-                                 counterStyle: TextStyle(color: AppColors.whiteColor),
-                                 border: OutlineInputBorder(
-                                   borderRadius: BorderRadius. circular(100.0),
-                                 ),
-                                 fillColor: Colors.transparent,
-                                 filled: true,
-                                 contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                                 focusedErrorBorder: OutlineInputBorder( borderRadius: BorderRadius. circular(100.0),borderSide: BorderSide(color: Colors.transparent)),
-                                 errorBorder: OutlineInputBorder( borderRadius: BorderRadius. circular(100.0),borderSide: BorderSide(color: Colors.transparent)),
-                                 focusedBorder: OutlineInputBorder( borderRadius: BorderRadius. circular(100.0),borderSide: BorderSide(color: Colors.transparent)),
-                                 enabledBorder: OutlineInputBorder( borderRadius: BorderRadius. circular(100.0),borderSide: BorderSide(color: Colors.transparent)),
-                               ),
-                             ),
-                           )
-                         ],
-                       )
-                     ],
+                                    counterStyle: TextStyle(color: AppColors.whiteColor),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius. circular(100.0),
+                                    ),
+                                    fillColor: Colors.transparent,
+                                    filled: true,
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                                    focusedErrorBorder: OutlineInputBorder( borderRadius: BorderRadius. circular(100.0),borderSide: BorderSide(color: Colors.transparent)),
+                                    errorBorder: OutlineInputBorder( borderRadius: BorderRadius. circular(100.0),borderSide: BorderSide(color: Colors.transparent)),
+                                    focusedBorder: OutlineInputBorder( borderRadius: BorderRadius. circular(100.0),borderSide: BorderSide(color: Colors.transparent)),
+                                    enabledBorder: OutlineInputBorder( borderRadius: BorderRadius. circular(100.0),borderSide: BorderSide(color: Colors.transparent)),
+                                  ),
+                                ),
+                              )
+                            ],
+                          )
+                        ],
 
-             ),
-                 )
-             )
-            ],
-          ),
+                      ),
+                    )
+                )
+              ],
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 CustomButtom(text: 'BACK',
                   ontap: (){
+                    curentStep=48;
                     selectedEnum=Pages.ShapeTypePage;
                     setState((){
 
@@ -1073,6 +1076,7 @@ class _TestSetupState extends State<TestSetup> {
                         );
                       }
                       else{
+                        curentStep=72;
                         testSetupModal.turtosity=turtosityController.text;
                         selectedEnum=Pages.SizePage;
                       }
@@ -1088,7 +1092,7 @@ class _TestSetupState extends State<TestSetup> {
         ) ,
       ),
     );
-   }
+  }
 
   Widget getSizeCard({  required String  text, Function() ? onTap, int Selected=0,required String url}){
     return GestureDetector(
@@ -1120,192 +1124,189 @@ class _TestSetupState extends State<TestSetup> {
     return Form(
       key: sizeKey,
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            Row(
-              children: [
-              Expanded(
-                flex: 2,
-                  child: Column(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              Row(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    getSizeCard(text: 'Small',onTap: (){
+                  Expanded(
+                      flex: 2,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              getSizeCard(text: 'Small',onTap: (){
 
-                      setState((){
-                      });
-                    },Selected:0,url: "assets/common/small.png"),
-                    getSizeCard(text: 'Medium',onTap: (){
-                      // sizeSelect=1;
-                      setState((){
-                      });
-                    },Selected:1,url: "assets/common/small.png"),
-                    getSizeCard(text: 'Large',onTap: (){
-                      // sizeSelect=2;
-                      setState((){
-                      });
-                    },Selected:2,url: "assets/common/large.png"),
-                  ],
-                )
+                                setState((){
+                                });
+                              },Selected:0,url: "assets/common/small.png"),
+                              getSizeCard(text: 'Medium',onTap: (){
+                                // sizeSelect=1;
+                                setState((){
+                                });
+                              },Selected:1,url: "assets/common/small.png"),
+                              getSizeCard(text: 'Large',onTap: (){
+                                // sizeSelect=2;
+                                setState((){
+                                });
+                              },Selected:2,url: "assets/common/large.png"),
+                            ],
+                          )
+                        ],
+                      )
+                  )  ,
+                  Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CommonText(text: "Enter Sample Thickness",fontSize: 25,),
+                          CommonTextfeildwithGradient(controller: thicknessController,width: 400,suffixicon:
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding:  EdgeInsets.only(right: 30),
+                                child: CommonText(text: 'mm'),
+                              ),
+                            ],
+                          ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter some text';
+                              }
+                              return null;
+                            },
+                            inputformatters: [
+                              FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
+                              TextInputFormatter.withFunction((oldValue, newValue) {
+                                try {
+                                  final text = newValue.text;
+                                  if (text.isNotEmpty) double.parse(text);
+                                  return newValue;
+                                } catch (e) {}
+                                return oldValue;
+                              }),
+                            ],
+                          ),
+                          SizedBox(height: 20,),
+                          CommonText(text: "Select Wetting Fluid",fontSize: 25,),
+                          Row(
+                            children: [
+                              CommonDropDown2(width:400,dropdownvalue: wettingFluids, items: wettingFluidsItemsTwo.map((e,_){
+                                return MapEntry(
+                                  e,
+                                  DropdownMenuItem(
+                                      value: e,
+                                      child: Container(
+                                        child: Text("$e : $_"),
+                                      )),
+                                );
+                              }).values.toList(),
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      print("new value: ${newValue}");
+                                      wettingFluids = newValue!;
+                                    });}),
+                              SizedBox(width: 15,),
+
+                              !wettingFluidsItems.containsKey(wettingFluids)  ? InkWell(
+                                  onTap: (){
+                                    wettingFluidsItems.remove(wettingFluids);
+                                    wettingFluidsItemsTwo.remove(wettingFluids);
+                                    wettingFluids = wettingFluidsItemsTwo.keys.first;
+                                    setState((){});
+                                  },
+                                  child: Icon(Icons.delete,color: AppColors.lightBlueColor,)):Container()
+                            ],
+                          ),
+                          SizedBox(height: 20,),
+                          wettingFluids== "AddFluid"?
+                          Row(
+                            children: [
+                              CommonTextfeildwithGradient(
+                                text: 'Name',
+                                controller:addFluidNameController ,width: 150,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                },),
+                              SizedBox(width: 10,),
+                              CommonText(text: ':'),
+                              SizedBox(width: 10,),
+                              CommonTextfeildwithGradient(
+                                text: 'Value',
+                                controller:addFluidValueController ,width: 150,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                },),
+                              SizedBox(width: 10,),
+                              CustomButtom(text: 'Add',
+                                ontap: (){
+                                  print('object');
+                                  wettingFluidsItemsTwo.addEntries([
+                                    MapEntry(addFluidNameController.text,addFluidValueController.text),
+                                  ]);
+                                  wettingFluids="${addFluidNameController.text}";
+
+                                  dropDownBox!.addAll([{addFluidNameController.text.trim():addFluidValueController.text.trim()}]);
+                                  // dropDownBox!.put(dropDownBoxKey, {addFluidNameController.text.trim():addFluidValueController.text.trim()});
+                                  // dropDownBox!.add({dropDownBoxKey:{addFluidNameController.text:addFluidValueController.text}});
+                                  setState((){
+                                  });
+                                },),
+
+                            ],
+                          ):Container()
+                        ],
+                      )
+                  )
                 ],
-              )
-              )  ,
-                Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                         CommonText(text: "Enter Sample Thickness",fontSize: 25,),
-                        CommonTextfeildwithGradient(controller: thicknessController,width: 400,suffixicon:
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding:  EdgeInsets.only(right: 30),
-                              child: CommonText(text: 'mm'),
-                            ),
-                          ],
-                        ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter some text';
-                            }
-                            return null;
-                          },
-                          inputformatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
-                            TextInputFormatter.withFunction((oldValue, newValue) {
-                              try {
-                                final text = newValue.text;
-                                if (text.isNotEmpty) double.parse(text);
-                                return newValue;
-                              } catch (e) {}
-                              return oldValue;
-                            }),
-                          ],
-                        ),
-                        SizedBox(height: 20,),
-                        CommonText(text: "Select Wetting Fluid",fontSize: 25,),
-                        Row(
-                          children: [
-                            CommonDropDown2(width:400,dropdownvalue: wettingFluids, items: wettingFluidsItemsTwo.map((e,_){
-                              return MapEntry(
-                                e,
-                                 DropdownMenuItem(
-                                  value: e,
-                                    child: Container(
-                                  child: Text("$e : $_"),
-                                )),
-                              );
-                            }).values.toList(),
-                            onChanged: (newValue) {
-                              setState(() {
-                                print("new value: ${newValue}");
-                                wettingFluids = newValue!;
-                              });}),
-                             SizedBox(width: 15,),
+              ),
+              SizedBox(height: 98,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CustomButtom(text: 'BACK',
+                    ontap: (){
+                      curentStep=60;
+                      selectedEnum=Pages.TortusityPage;
+                      setState((){
 
-                            !wettingFluidsItems.containsKey(wettingFluids)  ? InkWell(
-                                onTap: (){
-                                  wettingFluidsItems.remove(wettingFluids);
-                                  wettingFluidsItemsTwo.remove(wettingFluids);
-                                  wettingFluids = wettingFluidsItemsTwo.keys.first;
-                                  // dropDown
-                                  // print('object ${wettingFluidsItems.toString()}');
-                                  // getDropDownData();
-                                  setState((){});
-                                },
-                                child: Icon(Icons.delete,color: AppColors.lightBlueColor,)):Container()
-                          ],
-                        ),
-                         SizedBox(height: 20,),
-                         wettingFluids== "AddFluid"?
-                         Row(
-                           children: [
-                             CommonTextfeildwithGradient(
-                               text: 'Name',
-                               controller:addFluidNameController ,width: 150,
-                               validator: (value) {
-                                 if (value == null || value.isEmpty) {
-                                   return 'Please enter some text';
-                                 }
-                                 return null;
-                               },),
-                             SizedBox(width: 10,),
-                             CommonText(text: ':'),
-                             SizedBox(width: 10,),
-                             CommonTextfeildwithGradient(
-                               text: 'Value',
-                               controller:addFluidValueController ,width: 150,
-                               validator: (value) {
-                                 if (value == null || value.isEmpty) {
-                                   return 'Please enter some text';
-                                 }
-                                 return null;
-                               },),
-                             SizedBox(width: 10,),
-                             CustomButtom(text: 'Add',
-                               ontap: (){
-                                print('object');
-                                wettingFluidsItemsTwo.addEntries([
-                                  MapEntry(addFluidNameController.text,addFluidValueController.text),
-                                ]);
-                                wettingFluids="${addFluidNameController.text}";
+                      });
+                    },),
+                  SizedBox(width: 40,),
+                  CustomButtom(text: 'NEXT',
+                    ontap: (){
+                      if (!sizeKey.currentState!.validate()) {
+                        sizeKey.currentState!.save();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('error')),
+                        );
 
-                                dropDownBox!.addAll([{addFluidNameController.text.trim():addFluidValueController.text.trim()}]);
-                                // dropDownBox!.put(dropDownBoxKey, {addFluidNameController.text.trim():addFluidValueController.text.trim()});
-                                // dropDownBox!.add({dropDownBoxKey:{addFluidNameController.text:addFluidValueController.text}});
-                                 setState((){
-                                 });
-                               },),
-
-                           ],
-                         ):Container()
-                      ],
-                    )
-                )
-              ],
-            ),
-            SizedBox(height: 98,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                CustomButtom(text: 'BACK',
-                  ontap: (){
-                    selectedEnum=Pages.TortusityPage;
-                    setState((){
-
-                    });
-                  },),
-                SizedBox(width: 40,),
-                CustomButtom(text: 'NEXT',
-                  ontap: (){
-                    if (!sizeKey.currentState!.validate()) {
-                      sizeKey.currentState!.save();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('error')),
-                      );
-
-                    }
-                    else{
-                      testSetupModal.sizeType =sizeCardext;
-                      testSetupModal.thickness =thicknessController.text;
-                      // testSetupModal.wettingFluid =wettingFluids;
-
-                      selectedEnum=Pages.SelectBubblePoint;
-                      // showDialog(context: context, builder: (context) =>DailogBox());
-
-                    }
-                    setState((){
-                    });
-                  },),
+                      }
+                      else{
+                        curentStep=84;
+                        testSetupModal.sizeType =sizeCardext;
+                        testSetupModal.thickness =thicknessController.text;
+                        testSetupModal.wettingFluid = {};
+                        testSetupModal.wettingFluid[wettingFluids]=wettingFluidsItemsTwo[wettingFluids];
+                        selectedEnum=Pages.SelectBubblePoint;
+                      }
+                      setState((){
+                      });
+                    },),
 
 
-              ],
-            ),
-          ],
-        )
+                ],
+              ),
+            ],
+          )
       ),
     );
   }
@@ -1367,6 +1368,7 @@ class _TestSetupState extends State<TestSetup> {
             children: [
               CustomButtom(text: 'BACK',
                 ontap: (){
+                  curentStep=72;
                   selectedEnum=Pages.SizePage;
                   setState((){
                   });
@@ -1374,6 +1376,7 @@ class _TestSetupState extends State<TestSetup> {
               SizedBox(width: 40,),
               CustomButtom(text: 'NEXT',
                 ontap: (){
+                  curentStep=100;
                   testSetupModal.bubblePointType =bubblePointCardText;
                   selectedEnum=Pages.BubblePintSlider;
                   setState((){
@@ -1416,7 +1419,7 @@ class _TestSetupState extends State<TestSetup> {
                   ),
                   child: Row(
                     children: [
-                     CommonText(text: 'Fast'),
+                      CommonText(text: 'Fast'),
                       Expanded(
                         child: Slider(
                           value: currentSliderValue2,
@@ -1498,33 +1501,34 @@ class _TestSetupState extends State<TestSetup> {
               children: [
                 CustomButtom(text: 'BACK',
                   ontap: (){
+                    curentStep=84;
                     selectedEnum=Pages.SelectBubblePoint;
                     setState((){
                     });
                   },),
                 SizedBox(width: 40,),
                 CustomButtom(text: 'NEXT',
-                  ontap: (){
-                    if (BubblePointSliderKey.currentState!.validate()) {
-                      BubblePointSliderKey.currentState!.save();
-                      if (int.parse(testPressureFirstValueController.text) >
-                          int.parse(testPressureSecondValueController.text)) {
-                        testPressureFirstValueController.clear();
-                        testPressureSecondValueController.clear();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(
-                              'First value must be smaller then second value')),
-                        );
-                      }
-                      else {
-                        testSetupModal.bubblePoint = currentSliderValue2;
-                        testSetupModal.testPressureone = double.tryParse(testPressureFirstValueController.text) ?? 0.0;
-                        testSetupModal.testPressuretwo = double.tryParse(testPressureSecondValueController.text) ?? 0.0;
-                        showDialog(context: context,
-                            builder: (context) => DailogBox(testSetupModal: testSetupModal));
-                      }
-                      setState(() {});
-                    }}),
+                    ontap: (){
+                      if (BubblePointSliderKey.currentState!.validate()) {
+                        BubblePointSliderKey.currentState!.save();
+                        if (double.parse(testPressureFirstValueController.text) >
+                            double.parse(testPressureSecondValueController.text)) {
+                          testPressureFirstValueController.clear();
+                          testPressureSecondValueController.clear();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(
+                                'First value must be smaller then second value')),
+                          );
+                        }
+                        else {
+                          testSetupModal.bubblePoint = currentSliderValue2;
+                          testSetupModal.testPressureone = double.tryParse(testPressureFirstValueController.text) ?? 0.0;
+                          testSetupModal.testPressuretwo = double.tryParse(testPressureSecondValueController.text) ?? 0.0;
+                          showDialog(context: context,
+                              builder: (context) => DailogBox(testSetupModal: testSetupModal,sampleId: sampleId,));
+                        }
+                        setState(() {});
+                      }}),
 
 
 

@@ -14,6 +14,7 @@ import 'package:porelab_bubblepoint/views/commons/topheader.dart';
 import 'package:provider/provider.dart';
 import 'package:touch_ripple_effect/touch_ripple_effect.dart';
 
+import '../graphs/graph_view_page.dart';
 import '../views/graphs/graph_view_page.dart';
 
 class FolderStructure extends StatefulWidget {
@@ -424,14 +425,14 @@ class _FolderStructureState extends State<FolderStructure> {
                 }, text: 'Delete',selected: 0),
                 getButton(onTap: (){
                   buttonselect=1;
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context){
-                        return GraphViewPage(
-                          bubblePointModel: bp,
-                        );
-                      }
-                    ),
-                  );
+                  // Navigator.push(context,
+                  //     MaterialPageRoute(builder: (context){
+                  //       return GraphViewPage(
+                  //         bubblePointModel: bp,
+                  //       );
+                  //     }
+                  //   ),
+                  // );
                   setState((){
                   });
                 }, text: 'Generate',selected: 1)

@@ -14,8 +14,8 @@ import '../pdfs/create_sample_pdf.dart';
 import '../pdfs/open_my_pdf.dart';
 
 class GraphViewPage extends StatefulWidget {
-  BubblePointModel bubblePointModel;
-  GraphViewPage({required this.bubblePointModel});
+  List<BubblePointModel> bubblePointModelList;
+  GraphViewPage({required this.bubblePointModelList});
 
   @override
   _GraphViewPageState createState() => _GraphViewPageState();
@@ -25,14 +25,44 @@ class _GraphViewPageState extends State<GraphViewPage> {
 
   Future? getFutureData;
   bool pageMounted = false,isLoading = false;
-  List<FlSpot> flSpotList = [];
+  List<LineChartBarData> chartBarDataList = [];
   ScreenshotController screenshotController = ScreenshotController();
   bool isDarkGraph=false;
+  int colorIndex=0;
+  List<List<Color>> graphColorList = [
+    [Color(0xffDBBA4F)],
+    [Color(0xff3F76B5)],
+    [Color(0xffD67479)],
+    [Color(0xff12B59F)],
+    [Color(0xffF5903D)],
+    [Color(0xffBC4644)],
+    [Color(0xffAD4F73)],
+    [Color(0xff40A7C1)],
+    [Color(0xff95B64F)],
+    [Color(0xff613769)],
+    [Color(0xff234882)],
+    [Color(0xffA1846A)],
+  ];
 
   Future<void> getFlSpots() async {
-    for(int i=0;i<widget.bubblePointModel.ans.length;i++){
-      flSpotList.add(FlSpot(widget.bubblePointModel.t[i],widget.bubblePointModel.ans[i]));
-    }
+
+    widget.bubblePointModelList.forEach((element) {
+      List<FlSpot> flSpotList = [];
+      for(int i=0;i<element.ans.length;i++){
+        flSpotList.add(FlSpot(element.t[i],element.ans[i]));
+      }
+      chartBarDataList.add(
+            LineChartBarData(
+            spots: flSpotList,
+            colors:graphColorList[colorIndex]
+            )
+        );
+        colorIndex++;
+      });
+
+    MyPrint.printOnConsole("ab Length of data : ${widget.bubblePointModelList.length}");
+    MyPrint.printOnConsole("ab Length of graphSpot : ${chartBarDataList.length}");
+
   }
 
   @override
@@ -82,7 +112,7 @@ class _GraphViewPageState extends State<GraphViewPage> {
                           showDialog(
                               context: context,
                               builder: (context){
-                                return PdfGenerateDialog(bubblePointModel: widget.bubblePointModel,graphImage: graphImage ?? Uint8List.fromList([]),);
+                                return PdfGenerateDialog(bubblePointModel: widget.bubblePointModelList[0],graphImage: graphImage ?? Uint8List.fromList([]),);
                               }
                           );
 
@@ -214,12 +244,37 @@ class _GraphViewPageState extends State<GraphViewPage> {
             showTitles: false,
           ),
         ),
-        lineBarsData: [
+        /*lineBarsData: [
           LineChartBarData(
             spots: flSpotList,
-            colors: [Colors.blueAccent]
+            colors: [Colors.green]
           ),
-        ]
+          LineChartBarData(
+              spots: [
+                FlSpot(20, 1000),
+                FlSpot(40, 2000),
+                FlSpot(50, 5000),
+                FlSpot(60, 6000),
+                FlSpot(70, 7000),
+                FlSpot(80, 800),
+                FlSpot(90, 900),
+              ],
+              colors: [Colors.blueAccent]
+          ),
+          LineChartBarData(
+              spots: [
+                FlSpot(15, 150),
+                FlSpot(25, 2500),
+                FlSpot(5, 100),
+                FlSpot(35, 3500),
+                FlSpot(40, 4000),
+                FlSpot(55, 550),
+                FlSpot(65, 4500),
+              ],
+              colors: [Colors.red]
+          ),
+        ]*/
+        lineBarsData: chartBarDataList
       )
 
     );
@@ -388,3 +443,19 @@ class _GraphViewPageState extends State<GraphViewPage> {
 
 
 }
+
+
+// colors.add("#DBBA4F");
+// colors.add("#3F76B5");
+// colors.add("#D67479");
+// colors.add("#12B59F");
+// colors.add("#F5903D");
+// colors.add("#BC4644");
+// colors.add("#AD4F73");
+// colors.add("#40A7C1");
+// colors.add("#95B64F");
+//
+//
+// colors.add("#613769");
+// colors.add("#234882");
+// colors.add("#A1846A");

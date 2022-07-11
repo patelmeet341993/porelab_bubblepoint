@@ -117,13 +117,13 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   CommonLogoContainer(
                       onTap: (){
-                        Navigator.push(context,
+                        /*Navigator.push(context,
                             MaterialPageRoute(builder: (context){
                               return GraphViewPage(
                                 bubblePointModel: bubblePointModel,
                               );
                             }
-                            ));
+                            ));*/
                       },
                       url: "assets/common/icon 4 (1).png"),
                   SizedBox(width: 110,),

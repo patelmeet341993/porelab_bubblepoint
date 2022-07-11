@@ -7,6 +7,7 @@ import 'package:porelab_bubblepoint/views/commons/common_logo_container.dart';
 import 'package:porelab_bubblepoint/views/commons/custom_smallbutton.dart';
 import 'package:porelab_bubblepoint/views/commons/topheader.dart';
 import 'package:porelab_bubblepoint/views/settings_screens/screens/system%20_config.dart';
+import 'package:porelab_bubblepoint/views/test_setup/screens/grap_file.dart';
 import 'package:porelab_bubblepoint/views/test_setup/screens/test_setup.dart';
 import 'package:provider/provider.dart';
 import 'package:touch_ripple_effect/touch_ripple_effect.dart';
@@ -136,7 +137,12 @@ class _HomePageState extends State<HomePage> {
                       url: "assets/common/icon 5.png"),
                   SizedBox(width: 110,),
                   CommonLogoContainer(
-                      onTap: (){},
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => GraphPage()),
+                        );
+                      },
                       url: "assets/common/icon 6.png"),
                 ],
               )

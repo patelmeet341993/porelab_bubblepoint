@@ -51,40 +51,56 @@ class BubblePointModel {
 
   BubblePointModel.fromJson(Map<String, dynamic> json) {
     testname = json['testname'];
-
-    String piValue = json['p1'] ?? "";
-    if(piValue.isNotEmpty){
-      piValue.split(",").forEach((element) {
-        double p1Double = double.tryParse(element) ?? 0.0;
-        p1.add(p1Double);
-      });
-    }
-
-    // p1 = json['p1'] ?? ;
     p2 = stringToListDouble(json['p2']??"");
-    bpressure = json['bpressure'];
+    bpressure = double.tryParse(json['bpressure']) ?? 0.0;
     fluidname = json['fluidname'];
     duration = json['duration'];
     crosssection = json['crosssection'];
     materialtype = json['materialtype'];
     splate = json['splate'];
-    flow = json['flow'].cast<int>();
-    bdiameter = json['bdiameter'];
+    bdiameter = double.tryParse(json['bdiameter']) ?? 0.0;
     durationsecond = json['durationsecond'];
-    thresold = json['thresold'];
-    ans = json['ans'].cast<double>();
+    thresold = double.tryParse(json['thresold']) ?? 0.0;
     testtime = json['testtime'];
     testdate = json['testdate'];
-    dp = json['Dp'].cast<double>();
-    fluidvalue = json['fluidvalue'];
-    dt = json['Dt'].cast<double>();
-    tfact = json['tfact'];
-    t = json['t'].cast<int>();
+    fluidvalue = double.tryParse(json['fluidvalue'])??0.0;
+    tfact = double.tryParse(json['tfact'])??0.0;
     application = json['application'];
-    thikness = json['thikness'];
+    thikness = int.tryParse(json['thikness'])??0;
     indistry = json['indistry'];
-    samplediameter = json['samplediameter'];
+    samplediameter = double.tryParse(json['samplediameter'])??0.0;
     materialclassification = json['materialclassification'];
+
+    String piValue = json['p1'] ?? "";
+    if(piValue.isNotEmpty){
+      p1.addAll(piValue.split(",").map((e) => double.tryParse(e) ?? 0.0).toList());
+    }
+
+    String p2Value = json['p2'] ?? "";
+    if(p2Value.isNotEmpty){
+      p2.addAll(piValue.split(",").map((e) => double.tryParse(e) ?? 0.0).toList());
+    }
+    String flowValue = json['flow'] ?? "";
+    if(flowValue.isNotEmpty){
+      flow.addAll(piValue.split(",").map((e) => double.tryParse(e) ?? 0.0).toList());
+    }
+    String ansValue = json['ans'] ?? "";
+    if(ansValue.isNotEmpty){
+      dp.addAll(piValue.split(",").map((e) => double.tryParse(e) ?? 0.0).toList());
+    }
+
+    String dpValue = json['Dp'] ?? "";
+    if(dpValue.isNotEmpty){
+      dp.addAll(piValue.split(",").map((e) => double.tryParse(e) ?? 0.0).toList());
+    }
+    String dtValue = json['Dt'] ?? "";
+    if(dtValue.isNotEmpty){
+      dt.addAll(piValue.split(",").map((e) => double.tryParse(e) ?? 0.0).toList());
+    }
+    String tValue = json['t'] ?? "";
+    if(tValue.isNotEmpty){
+      t.addAll(piValue.split(",").map((e) => double.tryParse(e) ?? 0.0).toList());
+    }
   }
 
   Map<String, dynamic> toJson() {

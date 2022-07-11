@@ -14,6 +14,9 @@ import 'package:porelab_bubblepoint/views/commons/topheader.dart';
 import 'package:provider/provider.dart';
 import 'package:touch_ripple_effect/touch_ripple_effect.dart';
 
+import '../graphs/graph_view_page.dart';
+import '../views/graphs/graph_view_page.dart';
+
 class FolderStructure extends StatefulWidget {
   const FolderStructure({Key? key}) : super(key: key);
 
@@ -212,46 +215,87 @@ class _FolderStructureState extends State<FolderStructure> {
     return Container(
         child:Wrap(
         children: testList.entries.map((e) {
-        return InkWell(
-          focusColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          hoverColor: Colors.transparent,
-          splashColor: Colors.transparent,
-          onTap: (){
-            selectedKey = e.key;
-            subList.clear();
-            subList.addAll(e.value);
-            setState((){});
-          },
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  height: 150,
-                  width: 150,
-                
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                   mainAxisAlignment: MainAxisAlignment.center,
-                    children:  [
-                      ListTile(
-                        title: Icon(selectedKey == e.key ? FontAwesomeIcons.solidFolderOpen: FontAwesomeIcons.solidFolder,size: 50,color: selectedKey==e.key ? AppColors.lightBlueColor:AppColors.whiteColor.withOpacity(0.9)),
-                      ),
-                      const SizedBox(height: 3,),
-                      CommonText(text: e.key,fontWeight: FontWeight.w500,color:Colors.white)
+        return Stack(
+          children: [
+            InkWell(
+              focusColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              onTap: (){
+                selectedKey = e.key;
+                subList.clear();
+                subList.addAll(e.value);
+                setState((){});
+              },
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 150,
+                      width: 150,
 
-                    ],
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                       mainAxisAlignment: MainAxisAlignment.center,
+                        children:  [
+                          ListTile(
+                            title: Icon(selectedKey == e.key ? FontAwesomeIcons.solidFolderOpen: FontAwesomeIcons.solidFolder,size: 50,color: selectedKey==e.key ? AppColors.lightBlueColor:AppColors.greyColor),
+                          ),
+                          const SizedBox(height: 3,),
+                          CommonText(text: e.key,)
+
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+            InkWell(
+              focusColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              onTap: (){
+                if(selectedKey == e.key) {
+                  if (isSelectAll) {
+                    isSelectAll = false;
+                    subList.entries.forEach((element) {
+                      checkedItem.remove(element.key);
+                      selectedBubblePointModel.remove(element.key);
+                    });
+                    selectedItem.remove(selectedKey);
+                  } else {
+                    isSelectAll = true;
+                    subList.entries.forEach((element) {
+                      if (!checkedItem.contains(element.key)) {
+                        checkedItem.add(element.key);
+                        selectedBubblePointModel.addAll({element.key : BubblePointModel.fromJson(element.value)});
+                      }
+                    });
+                    selectedItem[selectedKey] = checkedItem;
+                  }
+                  print(selectedItem);
+                  print("selected bubblepoint length: ${selectedBubblePointModel.length}");
+
+                  setState(() {});
+                }
+              },
+              child: !selectedItem.containsKey(e.key)  ? Icon( FontAwesomeIcons.circle,color: AppColors.lightBlueColor,) : Icon( FontAwesomeIcons.solidCircleCheck,color: AppColors.lightBlueColor),
+            ),
+          ],
         );
       }).toList(),
       )
     );
   }
+
+  List<String> checkedItem = [];
+  Map<String, BubblePointModel> selectedBubblePointModel = {};
+  Map<String,dynamic> selectedItem = {};
+  bool isSelectAll = false;
 
   Widget subListView(){
     if(subList.isEmpty) {
@@ -264,14 +308,14 @@ class _FolderStructureState extends State<FolderStructure> {
           SizedBox(height:170),
           Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
-              child: CommonBoldText(text: selectedKey,fontWeight: FontWeight.w500,color:Colors.white,)),
+              child: CommonBoldText(text: selectedKey,fontWeight: FontWeight.w500,color:AppColors.whiteColor,)),
           Divider(color: AppColors.lightBlueColor,indent: 20,endIndent: 20,),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Row(children:
             [
-             Expanded(child: CommonBoldText(text: 'Name',fontWeight: FontWeight.w500,color:Colors.white,)),
-             Expanded(child: CommonBoldText(text: 'Date',color:Colors.white,fontWeight: FontWeight.w500))
+             Expanded(child: CommonBoldText(text: 'Name',fontWeight: FontWeight.w500,color:AppColors.whiteColor,)),
+             Expanded(child: CommonBoldText(text: 'Date',color:AppColors.whiteColor,fontWeight: FontWeight.w500))
             ],
             ),
           ),
@@ -281,27 +325,89 @@ class _FolderStructureState extends State<FolderStructure> {
               children: [
                 Expanded(
                   child: Column(
-                    children: subList.entries.map((e){
-                  return ListTile(
-                    onTap: (){
-                      FolderStructureProvider fsp = Provider.of<FolderStructureProvider>(context,listen: false);
-                      Map<String,BubblePointModel> bubblePointMap =  {};
-                      bubblePointMap[e.key] = BubblePointModel.fromJson(e.value);
-                      fsp.bubblePointModelList.add(bubblePointMap);
-                      print("length : ${fsp.bubblePointModelList.length}");
-                    },
-                    title: CommonText(text: e.key,)
-                  );
-                  }).toList(),),
-                ),
-                Expanded(
-                  child: Container(
-                    color: Colors.green,
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    child: Column(),
+                    children: [
+                     // ListTile(
+                     //   leading: Container(
+                     //     child: !isSelectAll ? Icon( FontAwesomeIcons.circle,color: AppColors.lightBlueColor,) : Icon( FontAwesomeIcons.solidCircleCheck,color: AppColors.lightBlueColor),
+                     //
+                     //   ),
+                     //     title: CommonText(text: "Select All",),
+                     //   onTap: (){
+                     //
+                     //     print("select all : ${subList.keys.contains(selectedItem[selectedKey])}");
+                     //
+                     //
+                     //     if(isSelectAll){
+                     //       isSelectAll = false;
+                     //       subList.entries.forEach((element) {
+                     //         checkedItem.remove(element.key);
+                     //       });
+                     //       selectedItem.remove(selectedKey);
+                     //     } else {
+                     //       isSelectAll = true;
+                     //       subList.entries.forEach((element) {
+                     //         if(!checkedItem.contains(element.key)){
+                     //           checkedItem.add(element.key);
+                     //         }
+                     //       });
+                     //       selectedItem[selectedKey] = checkedItem;
+                     //     }
+                     //     print(selectedItem);
+                     //     setState((){});
+                     //   },
+                     // ),
+                      Column(
+                        children: subList.entries.map((e){
+                      return ListTile(
+                        leading: Container(
+                          child: !checkedItem.contains(e.key) ? Icon( FontAwesomeIcons.circle,color: AppColors.lightBlueColor,) : Icon( FontAwesomeIcons.solidCircleCheck,color: AppColors.lightBlueColor),
+                        ),
+                        onTap: (){
+                          if(checkedItem.contains(e.key)){
+                            checkedItem.remove(e.key);
+                            selectedBubblePointModel.remove(e.key);
+                            if(checkedItem.isEmpty){
+                              selectedItem.remove(selectedKey);
+                              isSelectAll = false;
+                            }
+                          } else {
+                            checkedItem.add(e.key);
+                            selectedBubblePointModel.addAll({e.key:BubblePointModel.fromJson(e.value)});
+                            selectedItem[selectedKey] = checkedItem;
+                          }
+                          print("selected bubblepoint length: ${selectedBubblePointModel}");
+
+                          // print("values: ${checkedItem.toString()}");
+                          setState((){});
+                          // BubblePointModel bp = BubblePointModel.fromJson(e.value);
+                          // Navigator.push(context,
+                          //     MaterialPageRoute(builder: (context){
+                          //       return GraphViewPage(
+                          //         bubblePointModel: bp,
+                          //       );
+                          //     }
+                          //   ),
+                          // );
+                          // FolderStructureProvider fsp = Provider.of<FolderStructureProvider>(context,listen: false);
+                          // Map<String,BubblePointModel> bubblePointMap =  {};
+                          // bubblePointMap[e.key] = BubblePointModel.fromJson(e.value);
+                          // fsp.bubblePointModelList.add(bubblePointMap);
+                          // print("bp : ${bp.toJson()}");
+                        },
+                        title: CommonText(text: e.key,)
+                      );
+                      }).toList(),),
+                    ],
                   ),
-                )
+                ),
+                // Expanded(
+                //   child: Container(
+                //     color: Colors.green,
+                //     width: MediaQuery.of(context).size.width,
+                //     height: MediaQuery.of(context).size.height,
+                //     child: Column(),
+                //   ),
+                // )
               ],
             ),
           ),
@@ -319,6 +425,14 @@ class _FolderStructureState extends State<FolderStructure> {
                 }, text: 'Delete',selected: 0),
                 getButton(onTap: (){
                   buttonselect=1;
+                  // Navigator.push(context,
+                  //     MaterialPageRoute(builder: (context){
+                  //       return GraphViewPage(
+                  //         bubblePointModel: bp,
+                  //       );
+                  //     }
+                  //   ),
+                  // );
                   setState((){
                   });
                 }, text: 'Generate',selected: 1)
@@ -353,11 +467,12 @@ class _FolderStructureState extends State<FolderStructure> {
           borderRadius: BorderRadius.circular(10),
           color:  select==selected ? AppColors.greyColor :AppColors.blackColor,
         ),
-        child: Center(child:CommonText(text: text,color:select==selected ? Colors.white :AppColors.whiteColor,) ),
+        child: Center(child:CommonText(text: text,color:select==selected ? AppColors.blackColor :AppColors.whiteColor,) ),
 
       ),
         );
   }
+
   Widget getButton({required Function() onTap,required String text,int selected=0}){
     return TouchRippleEffect(
       borderRadius: BorderRadius.circular(30),
@@ -373,8 +488,8 @@ class _FolderStructureState extends State<FolderStructure> {
       ),
     );
   }
-
 }
+
 class CustomSearchDelegate extends SearchDelegate{
   List<String> Seacrhterms=[
     'golf',

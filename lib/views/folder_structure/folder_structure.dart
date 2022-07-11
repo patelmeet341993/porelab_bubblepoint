@@ -15,7 +15,6 @@ import 'package:provider/provider.dart';
 import 'package:touch_ripple_effect/touch_ripple_effect.dart';
 
 import '../graphs/graph_view_page.dart';
-import '../views/graphs/graph_view_page.dart';
 
 class FolderStructure extends StatefulWidget {
   const FolderStructure({Key? key}) : super(key: key);

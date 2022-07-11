@@ -424,16 +424,51 @@ class _FolderStructureState extends State<FolderStructure> {
                 }, text: 'Delete',selected: 0),
                 getButton(onTap: (){
                   buttonselect=1;
-                  // Navigator.push(context,
-                  //     MaterialPageRoute(builder: (context){
-                  //       return GraphViewPage(
-                  //         bubblePointModel: bp,
-                  //       );
-                  //     }
-                  //   ),
-                  // );
+                  List<BubblePointModel> bubblePointList = [];
+                  selectedBubblePointModel.values.forEach((element) {bubblePointList.add(element);});
+
+                  if(bubblePointList.length >10){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(
+                          'You Cannot Select More then 10 Files')),
+                    );
+                    return;
+                  }
+
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context){
+                        return GraphViewPage(
+                          bubblePointModelList:bubblePointList ,
+                        );
+                      }
+                    ),
+                  );
                   setState((){
                   });
+
+                  /*List<BubblePointModel> bubblePointList = [BubblePointModel(
+                      ans: [
+                        578.5234966216216,3763.581428571427,-4506.393552631579,4969.262608695657,-5708.098500000003,7278.568085106381
+                      ],
+                      t: [
+                        6.0,7.0,7.0,8.0,8.0,9.0
+                      ]
+                  ), BubblePointModel(
+                    ans: [
+                     200.5234966216216,2500.581428571427,-2506.393552631579,1515.262608695657,-2808.098500000003,-100.568085106381
+                    ],
+                    t: [
+                     1.0,5.0,8.0,12.0,14.0,12.5
+                    ]
+                  ), BubblePointModel(
+                    ans: [
+                     458.5234966216216,3763.581428571427,-506.393552631579,2549.262608695657,-508.098500000003,278.568085106381
+                    ],
+                    t: [
+                     10.0,15.0,17.0,18.0,18.5,19.0
+                    ]
+                  ),];
+                 */
                 }, text: 'Generate',selected: 1)
               ],
             ),

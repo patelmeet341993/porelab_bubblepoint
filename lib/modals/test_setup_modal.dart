@@ -15,11 +15,12 @@ class TestSetupModal{
   double bubblePoint;
   double testPressureone;
   double  testPressuretwo;
+  String saveFile;
 
   TestSetupModal({
     this.sampleProfile='',this.lotNumber='',this.industryType='Select Industry Type',this.materialApplication='',this.materialTypeCard='',this.shapeType='',
     this.materialType='Hydrophilic',this.turtosity='',this.sizeType='',this.thickness='',this.wettingFluid=const {},this.bubblePointType='',this.bubblePoint=0.0,
-    this.testPressureone=0.0,this.testPressuretwo=0.0
+    this.testPressureone=0.0,this.testPressuretwo=0.0,this.saveFile=''
   });
 
   /*TestSetupModal.fromMap(Map<Stirng, dynamic> map) {

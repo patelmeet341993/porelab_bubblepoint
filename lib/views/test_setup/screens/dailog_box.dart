@@ -4,6 +4,7 @@ import 'package:porelab_bubblepoint/config/app_colors.dart';
 import 'package:porelab_bubblepoint/config/common_text.dart';
 import 'package:porelab_bubblepoint/controller/provider/test_setup_provider.dart';
 import 'package:porelab_bubblepoint/views/login_page/screens/home_page.dart';
+import 'package:porelab_bubblepoint/views/test_setup/screens/grap_file.dart';
 import 'package:provider/provider.dart';
 
 import '../../../modals/test_setup_modal.dart';
@@ -11,8 +12,9 @@ import '../../commons/common_textfeildwith_gradient.dart';
 import '../../commons/custom_button.dart';
 class DailogBox extends StatefulWidget {
    TestSetupModal testSetupModal;
+   String ?sampleId;
 
-DailogBox({required this.testSetupModal});
+DailogBox({required this.testSetupModal,this.sampleId});
 
 
   @override
@@ -25,6 +27,10 @@ class _DailogBoxState extends State<DailogBox> {
   Box<Map>? firstBox;
   TextEditingController saveFileController=TextEditingController();
   final dialogKey = GlobalKey<FormState>();
+  @override
+  void initState(){
+    saveFileController.text=widget.sampleId!;
+  }
   @override
   Widget build(BuildContext context) {
 
@@ -67,7 +73,10 @@ class _DailogBoxState extends State<DailogBox> {
                 children: [
                   CustomButtom(text: 'NO',
                     ontap: (){
-                    Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => GraphPage()),
+                      );
                     },),
                   SizedBox(width: 40,),
                   CustomButtom(text: 'YES',
@@ -83,7 +92,7 @@ class _DailogBoxState extends State<DailogBox> {
                         testSetupProvider.notifyListeners();
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
+                          MaterialPageRoute(builder: (context) => GraphPage()),
                         );
                       }
                       },),

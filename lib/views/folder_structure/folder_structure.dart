@@ -236,10 +236,10 @@ class _FolderStructureState extends State<FolderStructure> {
                    mainAxisAlignment: MainAxisAlignment.center,
                     children:  [
                       ListTile(
-                        title: Icon(selectedKey == e.key ? FontAwesomeIcons.solidFolderOpen: FontAwesomeIcons.solidFolder,size: 50,color: selectedKey==e.key ? AppColors.lightBlueColor:AppColors.greyColor),
+                        title: Icon(selectedKey == e.key ? FontAwesomeIcons.solidFolderOpen: FontAwesomeIcons.solidFolder,size: 50,color: selectedKey==e.key ? AppColors.lightBlueColor:AppColors.whiteColor.withOpacity(0.9)),
                       ),
                       const SizedBox(height: 3,),
-                      CommonText(text: e.key,)
+                      CommonText(text: e.key,fontWeight: FontWeight.w500,color:Colors.white)
 
                     ],
                   ),
@@ -264,14 +264,14 @@ class _FolderStructureState extends State<FolderStructure> {
           SizedBox(height:170),
           Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
-              child: CommonBoldText(text: selectedKey,fontWeight: FontWeight.w500,color:AppColors.whiteColor,)),
+              child: CommonBoldText(text: selectedKey,fontWeight: FontWeight.w500,color:Colors.white,)),
           Divider(color: AppColors.lightBlueColor,indent: 20,endIndent: 20,),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Row(children:
             [
-             Expanded(child: CommonBoldText(text: 'Name',fontWeight: FontWeight.w500,color:AppColors.whiteColor,)),
-             Expanded(child: CommonBoldText(text: 'Date',color:AppColors.whiteColor,fontWeight: FontWeight.w500))
+             Expanded(child: CommonBoldText(text: 'Name',fontWeight: FontWeight.w500,color:Colors.white,)),
+             Expanded(child: CommonBoldText(text: 'Date',color:Colors.white,fontWeight: FontWeight.w500))
             ],
             ),
           ),
@@ -353,7 +353,7 @@ class _FolderStructureState extends State<FolderStructure> {
           borderRadius: BorderRadius.circular(10),
           color:  select==selected ? AppColors.greyColor :AppColors.blackColor,
         ),
-        child: Center(child:CommonText(text: text,color:select==selected ? AppColors.blackColor :AppColors.whiteColor,) ),
+        child: Center(child:CommonText(text: text,color:select==selected ? Colors.white :AppColors.whiteColor,) ),
 
       ),
         );

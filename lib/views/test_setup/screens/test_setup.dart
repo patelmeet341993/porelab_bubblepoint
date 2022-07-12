@@ -410,7 +410,18 @@ class _TestSetupState extends State<TestSetup> {
                     if (!sampleIdKey.currentState!.validate()) {
                       sampleIdKey.currentState!.save();
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('error')),
+                        SnackBar( behavior: SnackBarBehavior.floating,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          backgroundColor: AppColors.lightBlueColor.withOpacity(0.8),
+                          duration: Duration(seconds: 3),
+                          content: CommonText(text: 'Please Enter The Details',textAlign: TextAlign.center,color:Colors.white,fontSize: 20,),
+                          margin: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).size.height - 70,
+                              right: 300,
+                              left: 300),),
                       );
                     }
                     else{
@@ -1072,7 +1083,18 @@ class _TestSetupState extends State<TestSetup> {
                       tortusityKey.currentState!.save();
                       if(!(0<=double.parse(turtosityController.text)&&double.parse(turtosityController.text)<=1)){
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('error')),
+                          SnackBar( behavior: SnackBarBehavior.floating,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            backgroundColor: AppColors.lightBlueColor.withOpacity(0.8),
+                            duration: Duration(seconds: 3),
+                            content: CommonText(text: 'Please Enter The Details',textAlign: TextAlign.center,color:Colors.white,fontSize: 20,),
+                            margin: EdgeInsets.only(
+                                bottom: MediaQuery.of(context).size.height - 70,
+                                right: 300,
+                                left: 300),),
                         );
                       }
                       else{
@@ -1286,7 +1308,18 @@ class _TestSetupState extends State<TestSetup> {
                       if (!sizeKey.currentState!.validate()) {
                         sizeKey.currentState!.save();
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('error')),
+                          SnackBar( behavior: SnackBarBehavior.floating,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            backgroundColor: AppColors.lightBlueColor.withOpacity(0.8),
+                            duration: Duration(seconds: 3),
+                            content: CommonText(text: 'Please Enter The Details',textAlign: TextAlign.center,color:Colors.white,fontSize: 20,),
+                            margin: EdgeInsets.only(
+                                bottom: MediaQuery.of(context).size.height - 70,
+                                right: 300,
+                                left: 300),),
                         );
 
                       }
@@ -1516,8 +1549,18 @@ class _TestSetupState extends State<TestSetup> {
                           testPressureFirstValueController.clear();
                           testPressureSecondValueController.clear();
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(
-                                'First value must be smaller then second value')),
+                            SnackBar( behavior: SnackBarBehavior.floating,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              backgroundColor: AppColors.lightBlueColor.withOpacity(0.8),
+                            duration: Duration(seconds: 3),
+                              content: CommonText(text: 'First value must be smaller then second value',textAlign: TextAlign.center,color:Colors.white,fontSize: 20,),
+                              margin: EdgeInsets.only(
+                                  bottom: MediaQuery.of(context).size.height - 70,
+                                  right: 300,
+                                  left: 300),),
                           );
                         }
                         else {

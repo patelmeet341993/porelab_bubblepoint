@@ -5,7 +5,10 @@ import 'package:touch_ripple_effect/touch_ripple_effect.dart';
 class CustomButtom extends StatelessWidget {
  String text;
  Function()? ontap;
-CustomButtom({required this.text,this.ontap});
+ double horizonal;
+ double vertical;
+ double fontSize;
+CustomButtom({required this.text,this.ontap,this.horizonal=20,this.vertical=6,this.fontSize=18});
   @override
   Widget build(BuildContext context) {
     return TouchRippleEffect(
@@ -13,7 +16,7 @@ CustomButtom({required this.text,this.ontap});
       rippleColor: AppColors.blackColor,
       onTap: ontap,
       child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 6),
+          padding: EdgeInsets.symmetric(horizontal: horizonal,vertical: vertical),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
             gradient: LinearGradient(
@@ -25,7 +28,7 @@ CustomButtom({required this.text,this.ontap});
               ],
             )
         ),
-        child: CommonText(text: text,color: AppColors.whiteColor,fontSize: 18,)
+        child: CommonText(text: text,color: AppColors.whiteColor,fontSize: fontSize,)
 
       ),
     );

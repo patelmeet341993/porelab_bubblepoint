@@ -269,7 +269,6 @@ class _QuickTestState extends State<QuickTest> {
              children: [
                Expanded(
                    flex: 2,
-
                    child: CommonIncreaseDecrease(title: 'BPT Accuracy',controller:BptAccuracyController ,)),
                Expanded(flex: 1,
                    child: Container())
@@ -278,62 +277,60 @@ class _QuickTestState extends State<QuickTest> {
            SizedBox(height: 20,),
            Row(
              children: [
+               Row(
+                   children: [
+                     CommonText(text: 'Test Pressure',fontSize: 25,),
+                     SizedBox(width: 45,),
+                   ],
+                 ),
                Expanded(
-                   flex: 3,
+                   child: Row(children: [
+                 CommonTextfeildwithGradient(
+                   inputformatters: [
+                     FilteringTextInputFormatter.digitsOnly
+                   ],
+                   keyboard:TextInputType.number,controller: testPressureFirstValueController,width: 110,suffixicon:Column(
+                   mainAxisAlignment: MainAxisAlignment.center,
+                   children: [
+                     Padding(
+                       padding:  EdgeInsets.only(right: 15),
+                       child: CommonText(text: 'psi'),
+                     ),
+                   ],
+                 ),
+                   validator: (value) {
+                     if (value == null || value.isEmpty) {
+                       return 'Please enter some text';
+                     }
+                     return null;
+                   },),
+                 SizedBox(width: 10,),
+                 CommonText(text: 'to',fontSize: 25,),
+                 SizedBox(width: 10,),
+                 CommonTextfeildwithGradient(controller: testPressureSecondValueController,width: 110,suffixicon:
+                 Column(
+                   mainAxisAlignment: MainAxisAlignment.center,
+                   children: [
+                     Padding(
+                       padding:  EdgeInsets.only(right: 15),
+                       child: CommonText(text: 'psi'),
+                     ),
+                   ],
+                 ),
+                   validator: (value) {
+                     if (value == null || value.isEmpty) {
+                       return 'Please enter some text';
+                     }
+                     return null;
+                   },
+                   inputformatters: [
+                     FilteringTextInputFormatter.digitsOnly
+                   ],
+                 )
+               ],)),
 
-                   child:  Row(
-                     children: [
-                       CommonText(text: 'Test Pressure',fontSize: 25,),
-                       SizedBox(width: 45,),
-                       CommonTextfeildwithGradient(
-                         inputformatters: [
-                           FilteringTextInputFormatter.digitsOnly
-                         ],
-                         keyboard:TextInputType.number,controller: testPressureFirstValueController,width: 120,suffixicon:Column(
-                         mainAxisAlignment: MainAxisAlignment.center,
-                         children: [
-                           Padding(
-                             padding:  EdgeInsets.only(right: 15),
-                             child: CommonText(text: 'psi'),
-                           ),
-                         ],
-                       ),
-                         validator: (value) {
-                           if (value == null || value.isEmpty) {
-                             return 'Please enter some text';
-                           }
-                           return null;
-                         },),
-                       SizedBox(width: 20,),
-                       CommonText(text: 'to',fontSize: 25,),
-                       SizedBox(width: 20,),
-                       CommonTextfeildwithGradient(controller: testPressureSecondValueController,width: 120,suffixicon:
-                       Column(
-                         mainAxisAlignment: MainAxisAlignment.center,
-                         children: [
-                           Padding(
-                             padding:  EdgeInsets.only(right: 15),
-                             child: CommonText(text: 'psi'),
-                           ),
-                         ],
-                       ),
-                         validator: (value) {
-                           if (value == null || value.isEmpty) {
-                             return 'Please enter some text';
-                           }
-                           return null;
-                         },
-                         inputformatters: [
-                           FilteringTextInputFormatter.digitsOnly
-                         ],
-                       )
-                     ],
-                   ),),
-               Expanded(flex: 1,
-                   child: Container())
              ],
            ),
-
            SizedBox(height: 20,),
            Row(
              children: [
@@ -390,7 +387,7 @@ class _QuickTestState extends State<QuickTest> {
                   }
 
 
-                },))
+                },horizonal: 70,vertical: 10,))
           ],
         ),
       ),

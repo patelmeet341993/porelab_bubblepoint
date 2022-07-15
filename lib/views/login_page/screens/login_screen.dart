@@ -8,6 +8,7 @@ import 'package:porelab_bubblepoint/views/commons/custom_button.dart';
 import 'package:porelab_bubblepoint/views/login_page/screens/home_page.dart';
 
 import '../../../config/common_boldtext.dart';
+import '../../../config/my_size.dart';
 import '../../commons/common_textfeild.dart';
 import '../../commons/custom_smallbutton.dart';
 import '../../commons/topheader.dart';class LoginScreen extends StatefulWidget {
@@ -26,11 +27,14 @@ class _LoginScreenState extends State<LoginScreen> {
     HiveManager().initMethodHive();
 
 
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    MySize().init(context);
+
     return SafeArea(
         child: Scaffold(
       body:getbody()

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:porelab_bubblepoint/config/app_colors.dart';
 import 'package:porelab_bubblepoint/config/common_text.dart';
+import 'package:porelab_bubblepoint/config/my_size.dart';
 import 'package:porelab_bubblepoint/controller/provider/test_setup_provider.dart';
 import 'package:porelab_bubblepoint/modals/test_setup_modal.dart';
 import 'package:porelab_bubblepoint/utils/hive_manager.dart';
@@ -23,6 +24,7 @@ import '../../commons/custom_button.dart';
 import '../../commons/custom_smallbutton.dart';
 import '../../commons/topheader.dart';
 import '../../login_page/screens/home_page.dart';
+import '../componants/above_progress_indicator.dart';
 import 'dailog_box.dart';
 enum Pages{
   SampleIdWholePage,
@@ -49,6 +51,8 @@ class _TestSetupState extends State<TestSetup> {
   TestSetupProvider? testSetupProvider;
 
   String? sampleId;
+
+  int curentStep =0;
 
   Map<String,TestSetupModal> sampleIdItems={};
 
@@ -318,15 +322,20 @@ class _TestSetupState extends State<TestSetup> {
     );
   }
   Widget getbody(){
-    return Column(
-      children: [
-        topHeader(),
-        SizedBox(height: 60,),
-        getProgressIndicator(),
-        SizedBox(height: 100,),
-        update(selectedEnum)
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          topHeader(),
+          SizedBox(height: 60,),
+          //getProgressIndicator(),
+          Container(
+              padding: EdgeInsets.symmetric(horizontal: 200),
+              child: AboveProgressIndicator(curentStep: curentStep)),
+          SizedBox(height: 100,),
+          update(selectedEnum)
 
-      ],
+        ],
+      ),
     );
   }
 
@@ -351,7 +360,6 @@ class _TestSetupState extends State<TestSetup> {
     );
   }
 
-  int curentStep =0;
 
   Widget getProgressIndicator(){
     return Stack(
@@ -373,7 +381,7 @@ class _TestSetupState extends State<TestSetup> {
           child: StepProgressIndicator(
             totalSteps: 100,
             currentStep: curentStep,
-            size: 50,
+            size: 30,
             padding: 0,
             selectedColor: Colors.yellow,
             unselectedColor: AppColors.blackColor,
@@ -385,9 +393,9 @@ class _TestSetupState extends State<TestSetup> {
             ),
           ),
         ),
-        getPositionedCircle(190,0),
-        getPositionedCircle(760,60),
-        getPositionedCircle(1290,100),
+        getPositionedCircle(43,0),
+        getPositionedCircle(190,60),
+        getPositionedCircle(330,100),
       ],
     );
   }
@@ -586,7 +594,7 @@ class _TestSetupState extends State<TestSetup> {
 
   Widget getPositionedCircle(double left,int circlePosition){
     return  Positioned(
-        left: left,
+        left: MySize.getScaledSizeWidth(left),
         top: -7,
         child:
         Container(
@@ -601,8 +609,8 @@ class _TestSetupState extends State<TestSetup> {
                   AppColors.blackColor
                 ]),
           ),
-          height: 60,
-          width: 60,
+          height: 50,
+          width: 50,
           child:Container(
             margin: EdgeInsets.all(10),
             height: 40,width: 40,
@@ -780,7 +788,7 @@ class _TestSetupState extends State<TestSetup> {
       },
       child: Container(
         width: 170,
-        margin:EdgeInsets.only(right: 20),
+        //margin:EdgeInsets.only(right: 20),
         padding: EdgeInsets.symmetric(horizontal: 10,vertical: 40),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
@@ -805,53 +813,61 @@ class _TestSetupState extends State<TestSetup> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              getShapeCard(text: 'Triangular',onTap: (){
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 100),
+            child: Wrap(
+              runSpacing: 10,
+               spacing: 10,
+               crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.center,
+              direction: Axis.horizontal,
+              //mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                getShapeCard(text: 'Triangular',onTap: (){
 
-                setState((){
-                });
-              },url: "assets/common/t.png"),
+                  setState((){
+                  });
+                },url: "assets/common/t.png"),
 
-              getShapeCard(text: 'Rectangular',onTap: (){
+                getShapeCard(text: 'Rectangular',onTap: (){
 
-                setState((){
-                });
-              },url: "assets/common/rectangular.png"),
+                  setState((){
+                  });
+                },url: "assets/common/rectangular.png"),
 
-              getShapeCard(text: 'Circle',onTap: (){
-                // selectt=2;
-                setState((){
-                });
-              },
-                  url: "assets/common/circular .png"),
+                getShapeCard(text: 'Circle',onTap: (){
+                  // selectt=2;
+                  setState((){
+                  });
+                },
+                    url: "assets/common/circular .png"),
 
-              getShapeCard(text: 'Elliptical',onTap: (){
-                // selectt=3;
-                setState((){
-                });
-              },url: "assets/common/elliptical .png"),
+                getShapeCard(text: 'Elliptical',onTap: (){
+                  // selectt=3;
+                  setState((){
+                  });
+                },url: "assets/common/elliptical .png"),
 
-              getShapeCard(text: 'Square',onTap: (){
-                // selectt=4;
-                setState((){
-                });
-              },url: "assets/common/square.png"),
+                getShapeCard(text: 'Square',onTap: (){
+                  // selectt=4;
+                  setState((){
+                  });
+                },url: "assets/common/square.png"),
 
-              getShapeCard(text: 'Slit',onTap: (){
-                // selectt=5;
-                setState((){
-                });
-              },url: "assets/common/slit .png",),
+                getShapeCard(text: 'Slit',onTap: (){
+                  // selectt=5;
+                  setState((){
+                  });
+                },url: "assets/common/slit .png",),
 
-              getShapeCard(text: 'Unknown',onTap: (){
-                // selectt=6;
-                setState((){
-                });
-              },url: "assets/common/m1_5.png")
+                getShapeCard(text: 'Unknown',onTap: (){
+                  // selectt=6;
+                  setState((){
+                  });
+                },url: "assets/common/m1_5.png")
 
-            ],
+              ],
+            ),
           ),
           SizedBox(height: 50,),
           Container(
@@ -861,20 +877,10 @@ class _TestSetupState extends State<TestSetup> {
                 CommonText(text: 'MATERIAL TYPE',fontSize:25 ,),
                 SizedBox(width: 20,),
                 Expanded(
+                  flex: 2,
                   child: CommonRadio(onChanged:  (String ? value){
                     setState(() {
                       materialType = value!;
-                      // if(materialType==1)
-                      // {
-                      //   print('Hydrophilic');
-                      // }
-                      //   else if(materialType==2)
-                      //   {
-                      //   print('Hydrophobic');
-                      // }
-                      //   else{
-                      //   print('Unknown');
-                      // }
                     });
                   }, valued: materialType, text1: 'Hydrophilic', text2: 'Hydrophobic', text3: 'Unknown'),
                 ),
@@ -1152,7 +1158,7 @@ class _TestSetupState extends State<TestSetup> {
               Row(
                 children: [
                   Expanded(
-                      flex: 2,
+                      flex: 1,
                       child: Column(
                         children: [
                           Row(
@@ -1234,9 +1240,10 @@ class _TestSetupState extends State<TestSetup> {
 
                               !wettingFluidsItems.containsKey(wettingFluids)  ? InkWell(
                                   onTap: (){
-                                    wettingFluidsItems.remove(wettingFluids);
+                                   // wettingFluidsItems.remove(wettingFluids);
                                     wettingFluidsItemsTwo.remove(wettingFluids);
                                     wettingFluids = wettingFluidsItemsTwo.keys.first;
+                                    //dropDownBox!.
                                     setState((){});
                                   },
                                   child: Icon(Icons.delete,color: AppColors.lightBlueColor,)):Container()

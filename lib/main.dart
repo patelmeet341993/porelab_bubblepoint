@@ -6,6 +6,7 @@ import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:porelab_bubblepoint/config/app_colors.dart';
+import 'package:porelab_bubblepoint/config/my_size.dart';
 import 'package:porelab_bubblepoint/controller/provider/folder_structure_provider.dart';
 import 'package:porelab_bubblepoint/views/login_page/screens/home_page.dart';
 import 'package:porelab_bubblepoint/views/login_page/screens/login_screen.dart';
@@ -28,8 +29,10 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
+    //MySize().init(context);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => TestSetupProvider(), ),

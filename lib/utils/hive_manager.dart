@@ -68,7 +68,6 @@ class HiveManager {
     porelabbox=await Hive.openBox<Map>("porelabbox");
     print('gotbox :${porelabbox}');
     print('length:${porelabbox.toMap()}');
-
     return porelabbox;
   }
   Future<Box<Map>> initHivetwo()async{
@@ -76,7 +75,13 @@ class HiveManager {
     dropDownItemBox=await Hive.openBox<Map>("dropDownItemBox");
     print('gotbox :${dropDownItemBox}');
     print('length:${dropDownItemBox.toMap()}');
-
     return dropDownItemBox;
+  }
+  Future<Box<Map>> initHivethree()async{
+    Box<Map> systemConfigurationBox;
+    systemConfigurationBox=await Hive.openBox<Map>("systemConfigurationBox");
+    print('gotbox :${systemConfigurationBox}');
+    print('length:${systemConfigurationBox.toMap()}');
+    return systemConfigurationBox;
   }
 }

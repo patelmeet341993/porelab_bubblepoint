@@ -17,6 +17,7 @@ class TestSetupModal{
   double  testPressuretwo;
   String saveFile;
 
+
   TestSetupModal({
     this.sampleProfile='',this.lotNumber='',this.industryType='Select Industry Type',this.materialApplication='',this.materialTypeCard='',this.shapeType='',
     this.materialType='Hydrophilic',this.turtosity='',this.sizeType='',this.thickness='',this.wettingFluid=const {},this.bubblePointType='',this.bubblePoint=0.0,

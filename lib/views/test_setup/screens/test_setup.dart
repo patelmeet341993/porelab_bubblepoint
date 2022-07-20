@@ -19,6 +19,7 @@ import 'package:touch_ripple_effect/touch_ripple_effect.dart';
 import '../../../config/constants.dart';
 import '../../../controller/hive_controller.dart';
 import '../../../hive.dart';
+import '../../../utils/my_print.dart';
 import '../../commons/common_textfeildwith_gradient.dart';
 import '../../commons/custom_button.dart';
 import '../../commons/custom_smallbutton.dart';
@@ -279,6 +280,20 @@ class _TestSetupState extends State<TestSetup> {
     // print("length:${sampleIdItems.keys.first.runtimeType}");
     setState((){});
   }
+
+  void deleteItemFromHive(String deleteKey){
+    final Map<dynamic, Map> deliveriesMap = dropDownBox!.toMap();
+    dynamic desiredKey;
+    MyPrint.printOnConsole("wetting fluid 2: ${deliveriesMap}");
+    deliveriesMap.forEach((key, value) {
+      if(value.keys.contains(deleteKey)){
+        desiredKey = key;
+      }
+    });
+    dropDownBox!.delete(desiredKey);
+  }
+
+
 
   void getsetData(TestSetupModal tSM){
     sampleProfileController.text=tSM.sampleProfile;
@@ -1241,6 +1256,7 @@ class _TestSetupState extends State<TestSetup> {
                               !wettingFluidsItems.containsKey(wettingFluids)  ? InkWell(
                                   onTap: (){
                                    // wettingFluidsItems.remove(wettingFluids);
+                                    deleteItemFromHive(wettingFluids);
                                     wettingFluidsItemsTwo.remove(wettingFluids);
                                     wettingFluids = wettingFluidsItemsTwo.keys.first;
                                     //dropDownBox!.

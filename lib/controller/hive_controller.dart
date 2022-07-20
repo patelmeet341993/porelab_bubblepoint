@@ -26,4 +26,10 @@ class HiveController {
     return dropDownBox;
 
   }
+  Future<Box<Map>> initialHivethree()async{
+    Box<Map> systemConfigBox;
+    systemConfigBox = await HiveManager().initHivethree();
+    return systemConfigBox;
+
+  }
 }

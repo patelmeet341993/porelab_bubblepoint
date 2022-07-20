@@ -3,9 +3,11 @@ import 'dart:ffi';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:porelab_bubblepoint/config/app_colors.dart';
 import 'package:porelab_bubblepoint/config/common_text.dart';
 import 'package:porelab_bubblepoint/config/my_size.dart';
+import 'package:porelab_bubblepoint/modals/systemconfig_modal.dart';
 import 'package:porelab_bubblepoint/views/commons/common_dropdown.dart';
 import 'package:porelab_bubblepoint/views/commons/common_textwithdropdown.dart';
 import 'package:porelab_bubblepoint/views/commons/custom_smallbutton.dart';
@@ -13,8 +15,10 @@ import 'package:porelab_bubblepoint/views/commons/custom_smallcontainer.dart';
 import 'package:porelab_bubblepoint/views/commons/topheader.dart';
 import 'package:porelab_bubblepoint/views/login_page/screens/home_page.dart';
 
+import '../../../controller/hive_controller.dart';
 import '../../commons/custom_button.dart';
 import '../../commons/dashboard_top_header.dart';
+import 'dialog_box_systemconfig.dart';
 
 enum Categories {
   SYSTEMCONFIGURATION,
@@ -33,6 +37,7 @@ class SystemConfiguration extends StatefulWidget {
 }
 
 class _SystemConfigurationState extends State<SystemConfiguration> {
+  Box<Map>? systemConfigBox;
   TextEditingController pressureGuage1Controller = TextEditingController();
   TextEditingController pressureGuage2Controller = TextEditingController();
   TextEditingController pressureRegulatorController = TextEditingController();
@@ -42,12 +47,13 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
   TextEditingController firstBubbleController = TextEditingController();
   TextEditingController moderateController = TextEditingController();
   TextEditingController countiousController = TextEditingController();
+  SystemConfigModal systemConfigModal =SystemConfigModal();
   final systemConfrigurationKey = GlobalKey<FormState>();
   final testConfigurationKey = GlobalKey<FormState>();
   bool scaleType1 = false;
   bool scaleType2 = false;
-  bool disableEnable1 = false;
-  bool disableEnable2 = false;
+  bool lowPressureGuage = false;
+  bool curveFit = false;
   bool valveA = false;
   bool valveB = false;
   bool valveC = false;
@@ -57,39 +63,39 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
   bool valveG = false;
   bool valveH = false;
 
-  int valued = 1;
-  int selectChamber = 1;
-  String siUnit = 'psi';
+  String  valued ='Pressure Regulator Calibration';
+  String selectChamber ='Manual';
+  String siUnit ='psi';
   var siUnitItems = [
     'psi',
     'bar',
     'torr',
   ];
-  String siUnitSecond = 'psi';
+  String siUnitSecond ='psi';
   var siUnitSecondItems = [
     'psi',
     'bar',
     'torr',
   ];
-  String pressure = 'torr';
+  String pressure ='torr';
   var pressureItems = [
     'psi',
     'bar',
     'torr',
   ];
-  String flow = 'sccm';
+  String flow ='sccm';
   var flowItems = [
     'sccm',
     'sccs',
     'cfm',
   ];
-  String diameter = 'nm';
+  String diameter ='nm';
   var diameterItems = [
     'nm',
     'µm',
   ];
 
-  String precision = '1';
+  String precision ='1';
   var precisionItems = [
     '1',
     '2',
@@ -123,6 +129,88 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
 
   int select = 0;
 
+  void getSystemConfigurationdata()async{
+    systemConfigBox = await HiveController().initialHivethree();
+    //systemConfigBox!.clear();
+    Map<dynamic,Map<dynamic, dynamic>> map =systemConfigBox!.toMap();
+    map.forEach((key, value) {
+        print("values:${value.runtimeType}");
+       Map<String, dynamic> systemConfigModalMap = Map.castFrom(value);
+       systemConfigModal=SystemConfigModal.fromMap(systemConfigModalMap);
+       //print('modal:${systemConfigModal.calibration}');
+       getSystemConfigdata(systemConfigModal);
+    });
+  }
+  void getResetData(){
+    siUnit ='psi';
+    siUnitSecond ='psi';
+    scaleType1 = false;
+     scaleType2 = false;
+    selectChamber ='Manual';
+    lowPressureGuage = false;
+     curveFit = false;
+    valued ='Pressure Regulator Calibration';
+    pressure ='torr';
+    flow ='sccm';
+    diameter ='nm';
+    precision ='1';
+     valveA = false;
+     valveB = false;
+     valveC = false;
+     valveD = false;
+     valveE = false;
+     valveF = false;
+     valveG = false;
+     valveH = false;
+    pressureGuage1Controller.clear();
+   pressureGuage2Controller.clear();
+    pressureRegulatorController.clear();
+    flowMeter1Controller.clear();
+    flowMeter2Controller.clear();
+    flowController.clear();
+    firstBubbleController.clear();
+    moderateController.clear();
+    countiousController.clear();
+    setState((){});
+    systemConfigBox!.clear();
+  }
+
+  void getSystemConfigdata(SystemConfigModal SCM){
+    pressureGuage1Controller.text=SCM.pressureGuage1.toString();
+    pressureGuage2Controller.text=SCM.pressureGuage2.toString();
+    pressureRegulatorController.text=SCM.pressureRegulator.toString();
+    flowController.text=SCM.flowController.toString();
+     siUnit=SCM.setUnitOne;
+     siUnitSecond=SCM.setUnitTwo;
+     scaleType1=SCM.scaleTypeOne;
+     scaleType2=SCM.scaleTypeTwo;
+     selectChamber=SCM.selectChamber;
+     lowPressureGuage=SCM.lowPressureGuage;
+       curveFit=SCM.curveFit;
+       firstBubbleController.text=SCM.firstBubble.toString();
+       moderateController.text=SCM.moderate.toString();
+       countiousController.text=SCM.continous.toString();
+        valued=SCM.calibration;
+       pressure=SCM.pressure;
+       flow=SCM.flow;
+       diameter=SCM.diameter;
+       precision=SCM.precision;
+       valveA=SCM.valveA;
+       valveB=SCM.valveB;
+       valveC=SCM.valveC;
+       valveD=SCM.valveD;
+       valveE=SCM.valveE;
+       valveF=SCM.valveF;
+       valveG=SCM.valveG;
+       valveH=SCM.valveH;
+       setState((){});
+  }
+
+  @override
+   void initState() {
+    getSystemConfigurationdata();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -135,13 +223,31 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TopHeader(
-          show: true,
-          icon: Icons.arrow_back_ios_outlined,
-          text: "SETTINGS",
-          ontap: () {
-            Navigator.pop(context);
-          },
+        Container(
+          padding: EdgeInsets.only(right: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TopHeader(
+                show: true,
+                icon: Icons.arrow_back_ios_outlined,
+                text: "SETTINGS",
+                ontap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              CustomSmallButton(icon:Icons.refresh,ontap: (){
+                showDialog(context: context,
+                    builder: (context) => DailogBoxSystemCongif(text: 'You want to Reset',noOnTap: (){
+                      Navigator.pop(context);
+                    },yesOnTap: (){
+                      getResetData();
+                      Navigator.pop(context);
+                    },),barrierDismissible: false);
+                //getResetData();
+              },),
+            ],
+          ),
         ),
         SizedBox(
           height: 25,
@@ -234,8 +340,7 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
     );
   }
 
-  Widget getTab(
-      {required String text, required Function() onTap, int selected = 0}) {
+  Widget getTab({required String text, required Function() onTap, int selected = 0}) {
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -395,7 +500,7 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                           items: siUnitSecondItems,
                           onChanged: (String? newValue) {
                             setState(() {
-                              siUnit = newValue!;
+                              siUnitSecond = newValue!;
                             });
                           }),
                       // SizedBox(height: 10,),
@@ -447,6 +552,7 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                                       {
                                         setState(() {
                                           scaleType1 = value!;
+                                          print('print=${scaleType1}');
                                         });
                                       }
                                     }),
@@ -487,10 +593,59 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                         SnackBar(content: Text('error')),
                       );
                     } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomePage()),
-                      );
+                      showDialog(barrierDismissible: false,context: context,
+                          builder: (context) => DailogBoxSystemCongif(text: 'You want to Save',noOnTap: (){
+                            Navigator.pop(context);
+                          },yesOnTap: (){
+                              if(systemConfigBox!.keys.isNotEmpty){
+                        systemConfigModal.pressureGuage1=double.tryParse(pressureGuage1Controller.text)?? 0.0;
+                        systemConfigModal.pressureGuage2=double.tryParse(pressureGuage2Controller.text)?? 0.0;
+                        systemConfigModal.pressureRegulator=double.tryParse(pressureRegulatorController.text)?? 0.0;
+                        systemConfigModal.flowController=double.tryParse(flowController.text)?? 0.0;
+                        systemConfigModal.setUnitOne=siUnit;
+                        systemConfigModal.setUnitTwo=siUnitSecond;
+                        systemConfigModal.scaleTypeOne=scaleType1;
+                        systemConfigModal.scaleTypeTwo=scaleType2;
+                        systemConfigBox!.putAt(0, systemConfigModal.toMap());
+                        Navigator.pop(context);
+
+                      }
+                              else{
+                        systemConfigModal.pressureGuage1=double.tryParse(pressureGuage1Controller.text) ?? 0.0;
+                        systemConfigModal.pressureGuage2=double.tryParse(pressureGuage2Controller.text) ?? 0.0;
+                        systemConfigModal.pressureRegulator=double.tryParse(pressureRegulatorController.text) ?? 0.0;
+                        systemConfigModal.flowController=double.tryParse(flowController.text) ?? 0.0;
+                        systemConfigModal.setUnitOne=siUnit;
+                        systemConfigModal.setUnitTwo=siUnitSecond;
+                        systemConfigModal.scaleTypeOne=scaleType1;
+                        systemConfigModal.scaleTypeTwo=scaleType2;
+                        systemConfigBox?.add(systemConfigModal.toMap());
+                        Navigator.pop(context);
+                      }
+                          },));
+                      // if(systemConfigBox!.keys.isNotEmpty){
+                      //   systemConfigModal.pressureGuage1=double.tryParse(pressureGuage1Controller.text)?? 0.0;
+                      //   systemConfigModal.pressureGuage2=double.tryParse(pressureGuage2Controller.text)?? 0.0;
+                      //   systemConfigModal.pressureRegulator=double.tryParse(pressureRegulatorController.text)?? 0.0;
+                      //   systemConfigModal.flowController=double.tryParse(flowController.text)?? 0.0;
+                      //   systemConfigModal.setUnitOne=siUnit;
+                      //   systemConfigModal.setUnitTwo=siUnitSecond;
+                      //   systemConfigModal.scaleTypeOne=scaleType1;
+                      //   systemConfigModal.scaleTypeTwo=scaleType2;
+                      //   systemConfigBox!.putAt(0, systemConfigModal.toMap());
+                      //
+                      // }else{
+                      //   systemConfigModal.pressureGuage1=double.tryParse(pressureGuage1Controller.text) ?? 0.0;
+                      //   systemConfigModal.pressureGuage2=double.tryParse(pressureGuage2Controller.text) ?? 0.0;
+                      //   systemConfigModal.pressureRegulator=double.tryParse(pressureRegulatorController.text) ?? 0.0;
+                      //   systemConfigModal.flowController=double.tryParse(flowController.text) ?? 0.0;
+                      //   systemConfigModal.setUnitOne=siUnit;
+                      //   systemConfigModal.setUnitTwo=siUnitSecond;
+                      //   systemConfigModal.scaleTypeOne=scaleType1;
+                      //   systemConfigModal.scaleTypeTwo=scaleType2;
+                      //   systemConfigBox?.add(systemConfigModal.toMap());
+                      // }
+
                     }
                   },
                   horizonal: 70,
@@ -510,14 +665,7 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
     );
   }
 
-  Widget getSetRangeRow(
-      {int flex1 = 7,
-      int flex2 = 3,
-      required String text,
-      required String title,
-      required TextEditingController controller,
-      required String? Function(String?)? validator,
-      bool isFromTestConfiguration = false}) {
+  Widget getSetRangeRow({int flex1 = 7, int flex2 = 3,required String text,required String title, required TextEditingController controller, required String? Function(String?)? validator, bool isFromTestConfiguration = false}) {
     return Column(
       children: [
         Row(
@@ -549,12 +697,7 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
     );
   }
 
-  Widget getscaleTypeRow(
-      {double fontsize = 18,
-      required String text1,
-      required String text2,
-      required bool value,
-      required Function(bool? val)? onChanged}) {
+  Widget getscaleTypeRow({double fontsize = 18, required String text1, required String text2, required bool value, required Function(bool? val)? onChanged}) {
     return Row(
       //mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -655,9 +798,9 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                             Row(
                               children: [
                                 Radio(
-                                    value: 1,
+                                    value:'Manual' ,
                                     groupValue: selectChamber,
-                                    onChanged: (int? value) {
+                                    onChanged: (String? value) {
                                       setState(() {
                                         selectChamber = value!;
                                       });
@@ -670,9 +813,9 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                                   width: 20,
                                 ),
                                 Radio(
-                                    value: 2,
+                                    value: 'Automated',
                                     groupValue: selectChamber,
-                                    onChanged: (int? value) {
+                                    onChanged: (String ? value) {
                                       setState(() {
                                         selectChamber = value!;
                                       });
@@ -687,11 +830,11 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                             getscaleTypeRow(
                                 text1: 'DISABLE',
                                 text2: 'ENABLE',
-                                value: disableEnable1,
+                                value: lowPressureGuage,
                                 onChanged: (bool? value) {
                                   {
                                     setState(() {
-                                      disableEnable1 = value!;
+                                      lowPressureGuage = value!;
                                     });
                                   }
                                 },
@@ -700,11 +843,11 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                             getscaleTypeRow(
                                 text1: 'ON',
                                 text2: 'OFF',
-                                value: disableEnable2,
+                                value: curveFit,
                                 onChanged: (bool? value) {
                                   {
                                     setState(() {
-                                      disableEnable2 = value!;
+                                      curveFit = value!;
                                     });
                                   }
                                 },
@@ -792,10 +935,50 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                         SnackBar(content: Text('error')),
                       );
                     } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomePage()),
-                      );
+                      showDialog(barrierDismissible: false,context: context,
+                          builder: (context) => DailogBoxSystemCongif(text: 'You want to Save',
+                            noOnTap: (){
+                            Navigator.pop(context);
+                          },yesOnTap: (){
+                              if(systemConfigBox!.keys.isNotEmpty){
+                        systemConfigModal.selectChamber=selectChamber;
+                        systemConfigModal.lowPressureGuage=lowPressureGuage;
+                        systemConfigModal.curveFit=curveFit;
+                        systemConfigModal.firstBubble=double.tryParse(firstBubbleController.text)?? 0.0;
+                        systemConfigModal.continous=double.tryParse(countiousController.text)?? 0.0;
+                        systemConfigModal.moderate=double.tryParse(moderateController.text)?? 0.0;
+                        systemConfigBox!.putAt(0, systemConfigModal.toMap());
+                        Navigator.pop(context);
+                      }
+                        else {
+                        systemConfigModal.selectChamber = selectChamber;
+                        systemConfigModal.lowPressureGuage = lowPressureGuage;
+                        systemConfigModal.curveFit = curveFit;
+                        systemConfigModal.firstBubble = double.tryParse(firstBubbleController.text) ?? 0.0;
+                        systemConfigModal.continous = double.tryParse(countiousController.text) ?? 0.0;
+                        systemConfigModal.moderate = double.tryParse(moderateController.text) ?? 0.0;
+                        systemConfigBox?.add(systemConfigModal.toMap());
+                        Navigator.pop(context);
+                      }
+                          },));
+                      // if(systemConfigBox!.keys.isNotEmpty){
+                      //   systemConfigModal.selectChamber=selectChamber;
+                      //   systemConfigModal.lowPressureGuage=lowPressureGuage;
+                      //   systemConfigModal.curveFit=curveFit;
+                      //   systemConfigModal.firstBubble=double.tryParse(firstBubbleController.text)?? 0.0;
+                      //   systemConfigModal.continous=double.tryParse(countiousController.text)?? 0.0;
+                      //   systemConfigModal.moderate=double.tryParse(moderateController.text)?? 0.0;
+                      //   systemConfigBox!.putAt(0, systemConfigModal.toMap());
+                      // }
+                      //   else {
+                      //   systemConfigModal.selectChamber = selectChamber;
+                      //   systemConfigModal.lowPressureGuage = lowPressureGuage;
+                      //   systemConfigModal.curveFit = curveFit;
+                      //   systemConfigModal.firstBubble = double.tryParse(firstBubbleController.text) ?? 0.0;
+                      //   systemConfigModal.continous = double.tryParse(countiousController.text) ?? 0.0;
+                      //   systemConfigModal.moderate = double.tryParse(moderateController.text) ?? 0.0;
+                      //   systemConfigBox?.add(systemConfigModal.toMap());
+                      // }
                     }
                   },
                   horizonal: 70,
@@ -831,9 +1014,9 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
           Row(
             children: [
               Radio(
-                  value: 1,
+                  value:'Pressure Regulator Calibration',
                   groupValue: valued,
-                  onChanged: (int? value) {
+                  onChanged: (String? value) {
                     setState(() {
                       valued = value!;
                     });
@@ -847,9 +1030,9 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
           Row(
             children: [
               Radio(
-                  value: 2,
+                  value:'Flow Controller Calibration',
                   groupValue: valued,
-                  onChanged: (int? value) {
+                  onChanged: (String? value) {
                     setState(() {
                       valued = value!;
                     });
@@ -863,9 +1046,9 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
           Row(
             children: [
               Radio(
-                  value: 3,
+                  value:'Troubleshoot',
                   groupValue: valued,
-                  onChanged: (int? value) {
+                  onChanged: (String? value) {
                     setState(() {
                       valued = value!;
                     });
@@ -879,9 +1062,9 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
           Row(
             children: [
               Radio(
-                  value: 4,
+                  value:'Leak Test',
                   groupValue: valued,
-                  onChanged: (int? value) {
+                  onChanged: (String? value) {
                     setState(() {
                       valued = value!;
                     });
@@ -895,9 +1078,9 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
           Row(
             children: [
               Radio(
-                  value: 5,
+                  value:'Board Calibration',
                   groupValue: valued,
-                  onChanged: (int? value) {
+                  onChanged: (String? value) {
                     setState(() {
                       valued = value!;
                     });
@@ -917,10 +1100,30 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
               CustomButtom(
                 text: 'Start',
                 ontap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  );
+                  showDialog(barrierDismissible: false,context: context,
+                      builder: (context) => DailogBoxSystemCongif(text: 'You want to Save',
+                        noOnTap: (){
+                          Navigator.pop(context);
+                        },yesOnTap: (){
+                        if(systemConfigBox!.keys.isNotEmpty){
+                    systemConfigModal.calibration=valued;
+                    systemConfigBox!.putAt(0, systemConfigModal.toMap());
+                    Navigator.pop(context);
+                  } else{
+                    systemConfigModal.calibration=valued;
+                    systemConfigBox?.add(systemConfigModal.toMap());
+                    Navigator.pop(context);
+                  }
+                        },));
+
+                  // if(systemConfigBox!.keys.isNotEmpty){
+                  //   systemConfigModal.calibration=valued;
+                  //   systemConfigBox!.putAt(0, systemConfigModal.toMap());
+                  // } else{
+                  //   systemConfigModal.calibration=valued;
+                  //   systemConfigBox?.add(systemConfigModal.toMap());
+                  // }
+
                 },
                 horizonal: 70,
                 vertical: 10,
@@ -968,7 +1171,7 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
             child: CommonTextWithDropDown(
                 dropdownvalue: flow,
                 items: flowItems,
-                title: 'Pressure',
+                title: 'Flow',
                 onChanged: (String? newValue) {
                   setState(() {
                     flow = newValue!;
@@ -983,7 +1186,7 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
             child: CommonTextWithDropDown(
                 dropdownvalue: diameter,
                 items: diameterItems,
-                title: 'Pressure',
+                title: 'Diameter',
                 onChanged: (String? newValue) {
                   setState(() {
                     diameter = newValue!;
@@ -1031,10 +1234,43 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
               CustomButtom(
                 text: 'Apply',
                 ontap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  );
+                  showDialog(barrierDismissible: false,context: context,
+                      builder: (context) => DailogBoxSystemCongif(text: 'You want to Save',
+                        noOnTap: (){
+                          Navigator.pop(context);
+                        },yesOnTap: (){
+                            if(systemConfigBox!.keys.isNotEmpty){
+                    systemConfigModal.pressure=pressure;
+                    systemConfigModal.flow=flow;
+                    systemConfigModal.diameter=diameter;
+                    systemConfigModal.precision=precision;
+                    systemConfigBox!.putAt(0, systemConfigModal.toMap());
+                    Navigator.pop(context);
+                }
+                else{
+                    systemConfigModal.pressure=pressure;
+                    systemConfigModal.flow=flow;
+                    systemConfigModal.diameter=diameter;
+                    systemConfigModal.precision=precision;
+                    systemConfigBox?.add(systemConfigModal.toMap());
+                    Navigator.pop(context);
+                }
+                        },));
+                //   if(systemConfigBox!.keys.isNotEmpty){
+                //     systemConfigModal.pressure=pressure;
+                //     systemConfigModal.flow=flow;
+                //     systemConfigModal.diameter=diameter;
+                //     systemConfigModal.precision=precision;
+                //     systemConfigBox!.putAt(0, systemConfigModal.toMap());
+                // }
+                // else{
+                //     systemConfigModal.pressure=pressure;
+                //     systemConfigModal.flow=flow;
+                //     systemConfigModal.diameter=diameter;
+                //     systemConfigModal.precision=precision;
+                //     systemConfigBox?.add(systemConfigModal.toMap());
+                // }
+
                 },
                 horizonal: 70,
                 vertical: 10,
@@ -1314,10 +1550,60 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
               CustomButtom(
                 text: 'Apply',
                 ontap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  );
+                  showDialog(barrierDismissible: false,context: context,
+                      builder: (context) => DailogBoxSystemCongif(text: 'You want to Save',
+                        noOnTap: (){
+                          Navigator.pop(context);
+                        },yesOnTap: (){
+                  if(systemConfigBox!.keys.isNotEmpty){
+                    systemConfigModal.valveA=valveA;
+                    systemConfigModal.valveB=valveB;
+                    systemConfigModal.valveC=valveC;
+                    systemConfigModal.valveD=valveD;
+                    systemConfigModal.valveE=valveE;
+                    systemConfigModal.valveF=valveF;
+                    systemConfigModal.valveG=valveG;
+                    systemConfigModal.valveH=valveH;
+                    systemConfigBox!.putAt(0, systemConfigModal.toMap());
+                    Navigator.pop(context);
+                  }
+                  else{
+                    systemConfigModal.valveA=valveA;
+                    systemConfigModal.valveB=valveB;
+                    systemConfigModal.valveC=valveC;
+                    systemConfigModal.valveD=valveD;
+                    systemConfigModal.valveE=valveE;
+                    systemConfigModal.valveF=valveF;
+                    systemConfigModal.valveG=valveG;
+                    systemConfigModal.valveH=valveH;
+                    systemConfigBox?.add(systemConfigModal.toMap());
+                    Navigator.pop(context);
+                  }
+
+                        },));
+                  // if(systemConfigBox!.keys.isNotEmpty){
+                  //   systemConfigModal.valveA=valveA;
+                  //   systemConfigModal.valveB=valveB;
+                  //   systemConfigModal.valveC=valveC;
+                  //   systemConfigModal.valveD=valveD;
+                  //   systemConfigModal.valveE=valveE;
+                  //   systemConfigModal.valveF=valveF;
+                  //   systemConfigModal.valveG=valveG;
+                  //   systemConfigModal.valveH=valveH;
+                  //   systemConfigBox!.putAt(0, systemConfigModal.toMap());
+                  // }
+                  // else{
+                  //   systemConfigModal.valveA=valveA;
+                  //   systemConfigModal.valveB=valveB;
+                  //   systemConfigModal.valveC=valveC;
+                  //   systemConfigModal.valveD=valveD;
+                  //   systemConfigModal.valveE=valveE;
+                  //   systemConfigModal.valveF=valveF;
+                  //   systemConfigModal.valveG=valveG;
+                  //   systemConfigModal.valveH=valveH;
+                  //   systemConfigBox?.add(systemConfigModal.toMap());
+                  // }
+
                 },
                 horizonal: 70,
                 vertical: 10,

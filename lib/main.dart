@@ -10,6 +10,7 @@ import 'package:porelab_bubblepoint/config/my_size.dart';
 import 'package:porelab_bubblepoint/controller/provider/folder_structure_provider.dart';
 import 'package:porelab_bubblepoint/views/login_page/screens/home_page.dart';
 import 'package:porelab_bubblepoint/views/login_page/screens/login_screen.dart';
+import 'package:porelab_bubblepoint/views/splash_screen.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 
@@ -41,7 +42,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData(scaffoldBackgroundColor: AppColors.backGroundColor),
         debugShowCheckedModeBanner: false,
-        home: LoginScreen(),
+        home: SplashScreen(),
       ),
     );
   }

@@ -17,6 +17,8 @@ String pressure = "";
 String flow = "";
 String diameter = "";
 String precision = "";
+String ipAddress='';
+String selectPort='';
 bool curveFit =  false;
 bool lowPressureGuage =  false;
 bool valveA =  false;
@@ -32,7 +34,7 @@ SystemConfigModal({
   this.pressureGuage1=0.0,this.pressureGuage2=0.0,this.pressureRegulator=0.0,this.flowController=0.0,
   this.setUnitOne='psi',this.setUnitTwo='psi', this.firstBubble=0.0,this.continous=0.0,this.moderate=0.0,
   this.selectChamber='Manual',this.scaleTypeOne=false,this.scaleTypeTwo=false,this.flow='sccm',this.pressure='torr',this.diameter='nm',
-  this.precision='1',this.curveFit=false,this.lowPressureGuage=false,this.valveA=false,this.valveB=false,this.valveC=false,
+  this.precision='1',this.curveFit=false,this.lowPressureGuage=false,this.ipAddress='',this.selectPort='selectport',this.valveA=false,this.valveB=false,this.valveC=false,
   this.valveE=false,this.valveD=false,this.valveF=false,this.valveG=false,this.valveH=false,this.calibration=''
 
 });
@@ -56,6 +58,8 @@ SystemConfigModal.fromMap(Map<String,dynamic> map){
   precision=map['precision'] ?? '';
   curveFit=map['curveFit'] ?? false;
   lowPressureGuage=map['lowPressureGuage'] ?? false;
+  ipAddress=map['ipAddress'] ?? '';
+  selectPort=map['selectPort'] ?? '';
   valveA=map['valveA'] ?? false;
   valveB=map['valveB'] ?? false;
   valveC=map['valveC'] ?? false;
@@ -87,6 +91,8 @@ Map<String,dynamic> toMap(){
         "precision" : precision,
         "curveFit" : curveFit,
         "lowPressureGuage" : lowPressureGuage,
+        "ipAddress" : ipAddress,
+       "selectPort" : selectPort,
         "valveA" : valveA,
         "valveB" : valveB,
         "valveC" : valveC,

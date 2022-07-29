@@ -25,6 +25,7 @@ import '../../commons/custom_button.dart';
 import '../../commons/custom_smallbutton.dart';
 import '../../commons/topheader.dart';
 import '../../login_page/screens/home_page.dart';
+import '../../settings_screens/screens/dialog_box_systemconfig.dart';
 import '../componants/above_progress_indicator.dart';
 import 'dailog_box.dart';
 enum Pages{
@@ -359,15 +360,37 @@ class _TestSetupState extends State<TestSetup> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         TopHeader(show:true,icon:Icons.arrow_back_ios_outlined ,text: "TEST SETUP",ontap: (){
-          Navigator.pop(context);
+          showDialog(barrierDismissible: false,context: context,
+              builder: (context) => DailogBoxSystemCongif(text: 'You want to Close Test',
+                noOnTap: (){
+                  Navigator.pop(context);
+                },yesOnTap: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
+
+                },));
         },),
         Row(
           children: [
-            CustomSmallButton(icon:Icons.refresh),
-            SizedBox(width: 10,),
-            CustomSmallButton(icon:Icons.chevron_right),
-            SizedBox(width: 10,),
-            CustomSmallButton(icon:Icons.close),
+            // CustomSmallButton(icon:Icons.refresh),
+            // SizedBox(width: 10,),
+            // CustomSmallButton(icon:Icons.chevron_right),
+            // SizedBox(width: 10,),
+            CustomSmallButton(icon:Icons.close,ontap: (){
+              showDialog(barrierDismissible: false,context: context,
+                  builder: (context) => DailogBoxSystemCongif(text: 'You want to Close Test',
+                    noOnTap: (){
+                      Navigator.pop(context);
+                    },yesOnTap: (){
+                         Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                          );
+
+                    },));
+            },),
             SizedBox(width: 20,),
           ],
         )
@@ -439,7 +462,7 @@ class _TestSetupState extends State<TestSetup> {
                             borderRadius: BorderRadius.circular(50),
                           ),
                           backgroundColor: AppColors.lightBlueColor.withOpacity(0.8),
-                          duration: Duration(seconds: 3),
+
                           content: CommonText(text: 'Please Enter The Details',textAlign: TextAlign.center,color:Colors.white,fontSize: 20,),
                           margin: EdgeInsets.only(
                               bottom: MediaQuery.of(context).size.height - 70,
@@ -1298,10 +1321,7 @@ class _TestSetupState extends State<TestSetup> {
                                     MapEntry(addFluidNameController.text,addFluidValueController.text),
                                   ]);
                                   wettingFluids="${addFluidNameController.text}";
-
                                   dropDownBox!.addAll([{addFluidNameController.text.trim():addFluidValueController.text.trim()}]);
-                                  // dropDownBox!.put(dropDownBoxKey, {addFluidNameController.text.trim():addFluidValueController.text.trim()});
-                                  // dropDownBox!.add({dropDownBoxKey:{addFluidNameController.text:addFluidValueController.text}});
                                   setState((){
                                   });
                                 },),

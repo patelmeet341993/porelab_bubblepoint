@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -9,13 +10,15 @@ import 'package:porelab_bubblepoint/config/common_text.dart';
 import 'package:porelab_bubblepoint/config/my_size.dart';
 import 'package:porelab_bubblepoint/modals/systemconfig_modal.dart';
 import 'package:porelab_bubblepoint/views/commons/common_dropdown.dart';
+import 'package:porelab_bubblepoint/views/commons/common_textfeildwith_gradient.dart';
 import 'package:porelab_bubblepoint/views/commons/common_textwithdropdown.dart';
 import 'package:porelab_bubblepoint/views/commons/custom_smallbutton.dart';
 import 'package:porelab_bubblepoint/views/commons/custom_smallcontainer.dart';
 import 'package:porelab_bubblepoint/views/commons/topheader.dart';
 import 'package:porelab_bubblepoint/views/login_page/screens/home_page.dart';
-
+import 'package:libserialport/libserialport.dart';
 import '../../../controller/hive_controller.dart';
+import '../../commons/common_textandtextfeild.dart';
 import '../../commons/custom_button.dart';
 import '../../commons/dashboard_top_header.dart';
 import 'dialog_box_systemconfig.dart';
@@ -47,9 +50,11 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
   TextEditingController firstBubbleController = TextEditingController();
   TextEditingController moderateController = TextEditingController();
   TextEditingController countiousController = TextEditingController();
+  TextEditingController ipAddressController = TextEditingController();
   SystemConfigModal systemConfigModal =SystemConfigModal();
   final systemConfrigurationKey = GlobalKey<FormState>();
   final testConfigurationKey = GlobalKey<FormState>();
+  final comPortKey = GlobalKey<FormState>();
   bool scaleType1 = false;
   bool scaleType2 = false;
   bool lowPressureGuage = false;
@@ -62,6 +67,34 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
   bool valveF = false;
   bool valveG = false;
   bool valveH = false;
+
+  void getport(){
+    print('Available ports:');
+    var i = 0;
+    for (final name in SerialPort.availablePorts) {
+      final sp = SerialPort(name);
+      print('${++i}) $name');
+      print('\tDescription: ${sp.description}');
+      print('\tManufacturer: ${sp.manufacturer}');
+      print('\tSerial Number: ${sp.serialNumber}');
+      print('\tProduct ID: 0x${sp.productId!.toRadixString(16)}');
+      print('\tVendor ID: 0x${sp.vendorId!.toRadixString(16)}');
+      sp.dispose();
+    }
+    final name = SerialPort.availablePorts.first;
+    final port = SerialPort(name);
+    if (!port.openReadWrite()) {
+      print(SerialPort.lastError);
+      exit(-1);
+    }
+
+    // port.write(/*Uint8List bytes, {int timeout = -1}*/);
+
+    final reader = SerialPortReader(port);
+    reader.stream.listen((data) {
+      print('received: $data');
+    });
+  }
 
   String  valued ='Pressure Regulator Calibration';
   String selectChamber ='Manual';
@@ -154,6 +187,7 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
     flow ='sccm';
     diameter ='nm';
     precision ='1';
+    selectPort='selectport';
      valveA = false;
      valveB = false;
      valveC = false;
@@ -162,6 +196,7 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
      valveF = false;
      valveG = false;
      valveH = false;
+     ipAddressController.clear();
     pressureGuage1Controller.clear();
    pressureGuage2Controller.clear();
     pressureRegulatorController.clear();
@@ -195,6 +230,8 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
        flow=SCM.flow;
        diameter=SCM.diameter;
        precision=SCM.precision;
+    ipAddressController.text=SCM.ipAddress.toString();
+    selectPort=SCM.selectPort;
        valveA=SCM.valveA;
        valveB=SCM.valveB;
        valveC=SCM.valveC;
@@ -209,10 +246,16 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
   @override
    void initState() {
     getSystemConfigurationdata();
+    // initPorts();
   }
-
+  var availablePorts = [];
+  void initPorts() {
+    setState(() => availablePorts = SerialPort.availablePorts);
+    print("length of the port:${availablePorts.length}");
+  }
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
         child: Scaffold(
       body: getbody(),
@@ -233,7 +276,17 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                 icon: Icons.arrow_back_ios_outlined,
                 text: "SETTINGS",
                 ontap: () {
-                  Navigator.pop(context);
+                  showDialog(barrierDismissible: false,context: context,
+                      builder: (context) => DailogBoxSystemCongif(text: 'You want to Close Test',
+                        noOnTap: (){
+                          Navigator.pop(context);
+                        },yesOnTap: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                          );
+
+                        },));
                 },
               ),
               CustomSmallButton(icon:Icons.refresh,ontap: (){
@@ -590,7 +643,18 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                     if (!systemConfrigurationKey.currentState!.validate()) {
                       systemConfrigurationKey.currentState!.save();
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('error')),
+                        SnackBar( behavior: SnackBarBehavior.floating,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          backgroundColor: AppColors.lightBlueColor.withOpacity(0.8),
+
+                          content: CommonText(text: 'Please Enter The Details',textAlign: TextAlign.center,color:Colors.white,fontSize: 20,),
+                          margin: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).size.height - 70,
+                              right: 300,
+                              left: 300),),
                       );
                     } else {
                       showDialog(barrierDismissible: false,context: context,
@@ -932,7 +996,18 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
                     if (!testConfigurationKey.currentState!.validate()) {
                       testConfigurationKey.currentState!.save();
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('error')),
+                        SnackBar( behavior: SnackBarBehavior.floating,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          backgroundColor: AppColors.lightBlueColor.withOpacity(0.8),
+
+                          content: CommonText(text: 'Please Enter The Details',textAlign: TextAlign.center,color:Colors.white,fontSize: 20,),
+                          margin: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).size.height - 70,
+                              right: 300,
+                              left: 300),),
                       );
                     } else {
                       showDialog(barrierDismissible: false,context: context,
@@ -1283,59 +1358,135 @@ class _SystemConfigurationState extends State<SystemConfiguration> {
   }
 
   Widget getComport() {
-    return Container(
-      margin: EdgeInsets.only(right: 20, left: 20),
-      child: Column(
-        children: [
-          SizedBox(
-            height: 30,
-          ),
-          Row(
-            children: [
-              Container(
-                width: 270,
-                child: CommonDropDown(
-                    dropdownvalue: selectPort,
-                    items: selectPortItems,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectPort = newValue!;
-                      });
-                    }),
-              ),
-              SizedBox(
-                width: 40,
-              ),
-              CommonText(
-                text: 'COM : ',
-                fontSize: 20,
-              ),
-              CommonText(
-                text: selectPort,
-                fontSize: 20,
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 250,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CustomButtom(
-                text: 'Apply',
-                ontap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  );
-                },
-                horizonal: 70,
-                vertical: 10,
-              ),
-            ],
-          ),
-        ],
+    return Form(
+      key: comPortKey,
+      child: Container(
+        margin: EdgeInsets.only(right: 20, left: 20),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 30,
+            ),
+            Row(
+              children: [
+                Container(
+                  width: 270,
+                  child: CommonDropDown(
+                      dropdownvalue: selectPort,
+                      items: selectPortItems,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectPort = newValue!;
+                        });
+                      }),
+                ),
+                SizedBox(
+                  width: 40,
+                ),
+                CommonText(
+                  text: 'COM : ',
+                  fontSize: 20,
+                ),
+                CommonText(
+                  text: selectPort,
+                  fontSize: 20,
+                ),
+              ],
+            ),
+            SizedBox(height: 50,),
+            Row(
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: CommonTextWithTextfeild(title: 'IP address',text: 'ip address',controller:ipAddressController ,
+                    validator:  (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      return null;
+                    },),
+                ),
+                Expanded(flex: 6,
+                    child: Container())
+              ],
+            ),
+            SizedBox(
+              height: 200,
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomButtom(
+                  text: 'APPLY',
+                  ontap: () {
+                    if (!comPortKey.currentState!.validate()) {
+                      comPortKey.currentState!.save();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar( behavior: SnackBarBehavior.floating,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          backgroundColor: AppColors.lightBlueColor.withOpacity(0.8),
+
+                          content: CommonText(text: 'Please Enter The Details',textAlign: TextAlign.center,color:Colors.white,fontSize: 20,),
+                          margin: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).size.height - 70,
+                              right: 300,
+                              left: 300),),
+                      );
+                    } else {
+                      showDialog(barrierDismissible: false,context: context,
+                          builder: (context) => DailogBoxSystemCongif(text: 'You want to Save',noOnTap: (){
+                            Navigator.pop(context);
+                          },yesOnTap: (){
+                            if(systemConfigBox!.keys.isNotEmpty){
+                              systemConfigModal.ipAddress=ipAddressController.text;
+                              systemConfigModal.selectPort=selectPort;
+                              systemConfigBox!.putAt(0, systemConfigModal.toMap());
+                              Navigator.pop(context);
+
+                            }
+                            else{
+                              systemConfigModal.ipAddress=ipAddressController.text;
+                              systemConfigModal.selectPort=selectPort;
+                              systemConfigBox?.add(systemConfigModal.toMap());
+                              Navigator.pop(context);
+                            }
+                          },));
+                      // if(systemConfigBox!.keys.isNotEmpty){
+                      //   systemConfigModal.pressureGuage1=double.tryParse(pressureGuage1Controller.text)?? 0.0;
+                      //   systemConfigModal.pressureGuage2=double.tryParse(pressureGuage2Controller.text)?? 0.0;
+                      //   systemConfigModal.pressureRegulator=double.tryParse(pressureRegulatorController.text)?? 0.0;
+                      //   systemConfigModal.flowController=double.tryParse(flowController.text)?? 0.0;
+                      //   systemConfigModal.setUnitOne=siUnit;
+                      //   systemConfigModal.setUnitTwo=siUnitSecond;
+                      //   systemConfigModal.scaleTypeOne=scaleType1;
+                      //   systemConfigModal.scaleTypeTwo=scaleType2;
+                      //   systemConfigBox!.putAt(0, systemConfigModal.toMap());
+                      //
+                      // }else{
+                      //   systemConfigModal.pressureGuage1=double.tryParse(pressureGuage1Controller.text) ?? 0.0;
+                      //   systemConfigModal.pressureGuage2=double.tryParse(pressureGuage2Controller.text) ?? 0.0;
+                      //   systemConfigModal.pressureRegulator=double.tryParse(pressureRegulatorController.text) ?? 0.0;
+                      //   systemConfigModal.flowController=double.tryParse(flowController.text) ?? 0.0;
+                      //   systemConfigModal.setUnitOne=siUnit;
+                      //   systemConfigModal.setUnitTwo=siUnitSecond;
+                      //   systemConfigModal.scaleTypeOne=scaleType1;
+                      //   systemConfigModal.scaleTypeTwo=scaleType2;
+                      //   systemConfigBox?.add(systemConfigModal.toMap());
+                      // }
+
+                    }
+                  },
+                  horizonal: 70,
+                  vertical: 10,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

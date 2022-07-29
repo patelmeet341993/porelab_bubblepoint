@@ -14,9 +14,10 @@ class CommonIncreaseDecrease extends StatefulWidget {
 
 class _CommonIncreaseDecreaseState extends State<CommonIncreaseDecrease> {
   @override
+
   void initState() {
     super.initState();
-    widget.controller.text = "0";
+    //widget.controller.text = "0";
   }
   @override
   Widget build(BuildContext context) {
@@ -31,36 +32,30 @@ class _CommonIncreaseDecreaseState extends State<CommonIncreaseDecrease> {
              
               child: Row(
                 children: [
-                  InkWell(
-                      onTap: (){
-                        double currentvalue =double.parse(widget.controller.text);
-                        setState((){
-                          currentvalue++;
-                          widget.controller.text=(currentvalue).toString();
-                        });
-                        },
-                      child: CustomSmallButton(icon: Icons.add)),
+                  CustomSmallButton(icon: Icons.add,ontap: (){
+                    double currentvalue =double.parse(widget.controller.text);
+                    setState((){
+                      currentvalue++;
+                      widget.controller.text=(currentvalue).toString();
+                    });
+                  },),
                    SizedBox(width: 10,),
                   Expanded(
                       child: CommonTextfeildwithoutsuffix(textAlign:TextAlign.center,text:'',controller: widget.controller,)),
                     SizedBox(width: 10,),
-                  InkWell(
-                          onTap: (){
-                            double currentvalue =double.parse(widget.controller.text);
-                                  if(double.parse(widget.controller.text)<=0){
-                                    widget.controller.text==0;
-                                  }
-                                   else{
-                                    currentvalue--;
-                                    widget.controller.text=(currentvalue).toString();
-                                  }
-                            setState((){
+                  CustomSmallButton(icon: Icons.horizontal_rule_sharp,ontap: (){
+                    double currentvalue =double.parse(widget.controller.text);
+                    if(double.parse(widget.controller.text)<=0){
+                      widget.controller.text==0;
+                    }
+                    else{
+                      currentvalue--;
+                      widget.controller.text=(currentvalue).toString();
+                    }
+                    setState((){
 
-                            });
-                            },
-
-
-                      child: CustomSmallButton(icon: Icons.horizontal_rule_sharp))
+                    });
+                  },)
                 ],
               ),
             ),

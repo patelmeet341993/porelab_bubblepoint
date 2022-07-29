@@ -20,6 +20,7 @@ import '../../commons/dashboard_top_header.dart';
 import '../../folder_structure/folder_structure.dart';
 import '../../graphs/graph_view_page.dart';
 import '../../quick_test/screens/quick_test.dart';
+import 'login_screen.dart';
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -74,7 +75,12 @@ class _HomePageState extends State<HomePage> {
             SizedBox(width: 20,),
             CustomSmallButton(icon: Icons.arrow_forward_ios_outlined,),
             SizedBox(width: 20,),
-            CustomSmallButton(icon: Icons.close,),
+            CustomSmallButton(icon: Icons.close,ontap: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>  LoginScreen()),
+              );
+            },),
             SizedBox(width: 40,)
           ],
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
 import 'package:porelab_bubblepoint/config/app_colors.dart';
 import 'package:porelab_bubblepoint/config/common_text.dart';
 import 'package:porelab_bubblepoint/views/commons/common_dropdown.dart';
@@ -12,11 +13,14 @@ import 'package:porelab_bubblepoint/views/commons/custom_smallbutton.dart';
 import 'package:porelab_bubblepoint/views/login_page/screens/home_page.dart';
 import 'package:porelab_bubblepoint/views/login_page/screens/login_screen.dart';
 
+import '../../../controller/hive_controller.dart';
+import '../../../modals/test_setup_modal.dart';
 import '../../commons/common_increasedecrease.dart';
 import '../../commons/common_textandtextfeild.dart';
 import '../../commons/common_textandtextfeild.dart';
 import '../../commons/dashboard_top_header.dart';
 import '../../commons/topheader.dart';
+import '../../settings_screens/screens/dialog_box_systemconfig.dart';
 class QuickTest extends StatefulWidget {
   const QuickTest({Key? key}) : super(key: key);
 
@@ -25,20 +29,95 @@ class QuickTest extends StatefulWidget {
 }
 
 class _QuickTestState extends State<QuickTest> {
+  Box<Map>? firstBox,dropDownBox;
+  String wettingFluids = "Water";
 
-  String dropdownvalue = 'Item 1';
-  var items = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
-  ];
+
+  Map<String,String> wettingFluidsItems ={
+    "AddFluid":"0.0",
+    "Water":"72.0",
+    "MineralOil":"34.7",
+    "PetroleumDistillate":"30.0",
+    "DenaturedAlcohol":"22.3",
+    "Porewick":"16.0",
+    "Galwick":"15.9",
+  };
+
+  Map<String,String> wettingFluidsItemsTwo ={
+    "AddFluid":"0.0",
+    "Water":"72.0",
+    "MineralOil":"34.7",
+    "PetroleumDistillate":"30.0",
+    "DenaturedAlcohol":"22.3",
+    "Porewick":"16.0",
+    "Galwick":"15.9",
+  };
+  void getDropDownData() async {
+    dropDownBox = await HiveController().initialHivetwo();
+    // dropDownBox!.clear();
+    dropDownBox!.values.forEach((element) {
+      wettingFluidsItemsTwo.addAll(Map.castFrom<dynamic,dynamic,String,String>(element));
+    });
+    print("dropdownmenu $dropDownBox");
+  }
+  TestSetupModal testSetupModal =TestSetupModal();
+  void getTestSetList()async{
+    sampleId = null;
+    firstBox = await HiveController().initialHive();
+    // firstBox!.clear();
+    Map<dynamic,Map<dynamic, dynamic>> map =firstBox!.toMap();
+    // print("Value:${value}, Type:${value.runtimeType}");
+
+    map.forEach((key, value) {
+      // print("Key:${key}, Type:${key.runtimeType}");
+      // print("Value:${value}, Type:${value.runtimeType}");
+
+      Map<String, dynamic> testSetupModalMap = {};
+      if(value is Map) {
+        try {
+          testSetupModalMap = Map.castFrom<dynamic, dynamic, String, dynamic>(value);
+        }
+        catch(e) {}
+      }
+
+      if(testSetupModalMap.isNotEmpty && key is String) {
+        sampleIdItems[key] = TestSetupModal.fromMap(testSetupModalMap);
+      }
+    });
+    sampleId = sampleIdItems.keys.first;
+    // print("length:${sampleIdItems.keys.first.runtimeType}");
+    setState((){});
+  }
+
+
+ void  getsetData(TestSetupModal tSM){
+    testSetupModal = tSM;
+    sampleIdController.text=tSM.sampleProfile;
+     lotNoController.text=tSM.lotNumber;
+     TurtuosityController.text=tSM.turtosity.toString();
+    wettingFluids=tSM.wettingFluid.keys.first;
+     // wettingFluidController.text =tSM.wettingFluid.keys.first + ' : ' +tSM.wettingFluid.values.first;
+     // print('wetting ${wettingFluidController.text}');
+    bptThershold=tSM.bubblePointType;
+    BptAccuracyController.text=tSM.bubblePoint.toString();
+    testPressureFirstValueController.text=tSM.testPressureone.toString();
+    testPressureSecondValueController.text=tSM.testPressuretwo.toString();
+
+    setState((){});
+  }
+
+
+  String? sampleId;
+
+  int curentStep =0;
+
+  Map<String,TestSetupModal> sampleIdItems={};
+
   String bptThershold = 'First Bubble';
   var bptThersholditems = [
     'First Bubble',
     'Moderate',
-    'Countious',
+    'Countinous',
   ];
   String testTrail = '1';
   var testTrailItems = [
@@ -60,15 +139,25 @@ class _QuickTestState extends State<QuickTest> {
    int testMethod=1;
    int samplePlate=1;
   TextEditingController sampleIdController=TextEditingController();
+  TextEditingController bubblePointController=TextEditingController();
   TextEditingController TurtuosityController=TextEditingController();
   TextEditingController lotNoController=TextEditingController();
   TextEditingController bptThresholdController=TextEditingController();
   TextEditingController BptAccuracyController=TextEditingController();
   TextEditingController testAccuracyController=TextEditingController();
   TextEditingController dataStabilityController=TextEditingController();
+  TextEditingController wettingFluidController=TextEditingController();
   TextEditingController testPressureFirstValueController=TextEditingController();
   TextEditingController testPressureSecondValueController=TextEditingController();
+  TextEditingController addFluidNameController=TextEditingController();
+  TextEditingController addFluidValueController=TextEditingController();
   final Key = GlobalKey<FormState>();
+
+  @override
+  void initState(){
+    sampleIdItems["select Project"]=TestSetupModal();
+    getTestSetList();
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(child: Scaffold(
@@ -106,7 +195,17 @@ class _QuickTestState extends State<QuickTest> {
         Column(
           children: [
             TopHeader(show:true,icon:Icons.arrow_back_ios_outlined ,text: "QUICK TEST",ontap: (){
-              Navigator.pop(context);
+              showDialog(barrierDismissible: false,context: context,
+                  builder: (context) => DailogBoxSystemCongif(text: 'You want to Close Test',
+                    noOnTap: (){
+                      Navigator.pop(context);
+                    },yesOnTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomePage()),
+                      );
+
+                    },));
             },)
           ],
         ),
@@ -114,11 +213,65 @@ class _QuickTestState extends State<QuickTest> {
         Expanded(
           child: Column(
             children: [
-              CommonDropDown(dropdownvalue: dropdownvalue,items:items,onChanged: (String? newValue) {
-                setState(() {
-                  dropdownvalue = newValue!;
-                });
-              })
+              Container(
+                height: 35,
+                padding: EdgeInsets.symmetric(horizontal: 25),
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.whiteColor,
+                      offset: Offset(-3, -0),
+                      blurRadius: 1.0,
+                      spreadRadius:1,
+                    ),
+                    BoxShadow(
+                      color: Colors.black,
+                      offset: Offset(4, 0),
+                      blurRadius: 1.0,
+                      spreadRadius:1,
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(100),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppColors.blackColor,
+                      AppColors.backGroundColor
+                    ],
+                  ),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    style:  TextStyle(
+                      color: AppColors.whiteColor,
+                      fontSize: 16,
+                    ),
+                    isExpanded: true,
+                    dropdownColor: AppColors.blackColor,
+                    value: sampleId,
+                    icon: Icon(Icons.keyboard_arrow_down,color: AppColors().buttonColor,),
+                    // items: sampleIdItems
+                    items: sampleIdItems.entries.map((MapEntry e) {
+                      return DropdownMenuItem<String>(child: Text("${e.key}"), value: e.key,);
+                    }).toList(),
+                    onChanged:  (newValue) {
+
+                      setState(() {
+                        //print("runtime type: ${newValue.runtimeType}");
+                        sampleId = newValue!;
+                        // testSetupModal = sampleIdItems[sampleId] ?? TestSetupModal();
+                        getsetData(sampleIdItems[sampleId] ?? TestSetupModal());
+                      });
+                    },
+                  ),
+                ),
+              )
+              // CommonDropDown(dropdownvalue: dropdownvalue,items:items,onChanged: (String? newValue) {
+              //   setState(() {
+              //     dropdownvalue = newValue!;
+              //   });
+              // })
             ],
           ),
         ),
@@ -127,11 +280,23 @@ class _QuickTestState extends State<QuickTest> {
           children: [
             Row(
               children: [
-                CustomSmallButton(icon:Icons.refresh),
-                SizedBox(width: 10,),
-                CustomSmallButton(icon:Icons.chevron_right),
-                SizedBox(width: 10,),
-                CustomSmallButton(icon:Icons.close),
+                // CustomSmallButton(icon:Icons.refresh),
+                // SizedBox(width: 10,),
+                // CustomSmallButton(icon:Icons.chevron_right),
+                // SizedBox(width: 10,),
+                CustomSmallButton(icon:Icons.close,ontap: (){
+                  showDialog(barrierDismissible: false,context: context,
+                      builder: (context) => DailogBoxSystemCongif(text: 'You want to Close Test',
+                        noOnTap: (){
+                          Navigator.pop(context);
+                        },yesOnTap: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                          );
+
+                        },));
+                }),
                 SizedBox(width: 20,),
               ],
             )
@@ -195,19 +360,81 @@ class _QuickTestState extends State<QuickTest> {
                   testTrail  = newValue!;
                 });}),
           SizedBox(height: 20,),
-          CommonTextWithDropDown(dropdownvalue: wettingFluid , items: wettingFluidItems , title: 'Wetting Fluid',
-              onChanged:(String? newValue) {
-                setState(() {
-                  wettingFluid = newValue!;
-                });}),
+
+          Row(
+            children: [
+              Expanded(flex: 2,
+                  child: CommonText(text: "Wetting Fluid",fontSize: 25,)),
+              Expanded(flex: 3,
+                child: CommonDropDown2(width:400,dropdownvalue: wettingFluids, items: wettingFluidsItemsTwo.map((e,_){
+                  return MapEntry(
+                    e,
+                    DropdownMenuItem(
+                        value: e,
+                        child: Container(
+                          child: Text("$e : $_"),
+                        )),
+                  );
+                }).values.toList(),
+                    onChanged: (newValue) {
+                      setState(() {
+                        print("new value: ${newValue}");
+                        wettingFluids = newValue!;
+                      });}),
+              ),
+            ],
+          ),
+      // CommonTextWithTextfeild(title: 'Wetting Fluid',text: 'Wetting Fluid',controller:wettingFluidController ,validator:
+      //     (value) {
+      //   if (value == null || value.isEmpty) {
+      //     return 'Please enter some text';
+      //   }
+      //   return null;
+      // },),
           SizedBox(height: 20,),
-          // CommonTextWithTextfeild(title: 'Turtuosity',text: 'Turtuosity',controller:TurtuosityController ,
-          //   validator:  (value) {
-          //   if (value == null || value.isEmpty) {
-          //     return 'Please enter some text';
-          //   }
-          //   return null;
-          // },),
+          wettingFluids== "AddFluid"?
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              CommonTextfeildwithGradient(
+                text: 'Name',
+                controller:addFluidNameController ,width: 150,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter some text';
+                  }
+                  return null;
+                },),
+              SizedBox(width: 10,),
+              CommonText(text: ':'),
+              SizedBox(width: 10,),
+              CommonTextfeildwithGradient(
+                text: 'Value',
+                controller:addFluidValueController ,width: 150,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter some text';
+                  }
+                  return null;
+                },),
+              SizedBox(width: 10,),
+              CustomButtom(text: 'Add',
+                ontap: (){
+                  print('object');
+                  wettingFluidsItemsTwo.addEntries([
+                    MapEntry(addFluidNameController.text,addFluidValueController.text),
+                  ]);
+                  wettingFluids="${addFluidNameController.text}";
+                  dropDownBox!.addAll([{addFluidNameController.text.trim():addFluidValueController.text.trim()}]);
+                  // dropDownBox!.put(dropDownBoxKey, {addFluidNameController.text.trim():addFluidValueController.text.trim()});
+                  // dropDownBox!.add({dropDownBoxKey:{addFluidNameController.text:addFluidValueController.text}});
+                  setState((){
+                  });
+                },),
+
+            ],
+          ):Container(),
+
           SizedBox(height: 25,),
 
 
@@ -250,11 +477,13 @@ class _QuickTestState extends State<QuickTest> {
              ],
            ),
            SizedBox(height: 20,),
+
+
            Row(
              children: [
                Expanded(
                    flex: 2,
-                   child:  CommonTextWithDropDown(dropdownvalue: bptThershold , items: bptThersholditems , title: 'BPT threshold',
+                   child:   CommonTextWithDropDown(dropdownvalue: bptThershold , items: bptThersholditems , title: 'BPT Thershold',
                        onChanged:(String? newValue) {
                          setState(() {
                            bptThershold  = newValue!;
@@ -269,7 +498,7 @@ class _QuickTestState extends State<QuickTest> {
              children: [
                Expanded(
                    flex: 2,
-                   child: CommonIncreaseDecrease(title: 'BPT Accuracy',controller:BptAccuracyController ,)),
+                   child: CommonIncreaseDecrease(title: 'BPT Accuracy',controller:BptAccuracyController,)),
                Expanded(flex: 1,
                    child: Container())
              ],
@@ -370,14 +599,41 @@ class _QuickTestState extends State<QuickTest> {
                 child: CustomButtom(text: 'NEXT',ontap:(){
                   if (Key.currentState!.validate()) {
                     Key.currentState!.save();
-                    if(int.parse(testPressureFirstValueController.text) > int.parse(testPressureSecondValueController.text)){
+                    if(double.parse(testPressureFirstValueController.text) > double.parse(testPressureSecondValueController.text)){
                       // testPressureFirstValueController.clear();
                       // testPressureSecondValueController.clear();
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('First value must be smaller then second value')),
+                        SnackBar( behavior: SnackBarBehavior.floating,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          backgroundColor: AppColors.lightBlueColor.withOpacity(0.8),
+
+                          content: CommonText(text: 'frst value is smaller than second value',textAlign: TextAlign.center,color:Colors.white,fontSize: 20,),
+                          margin: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).size.height - 70,
+                              right: 300,
+                              left: 300),),
                       );
                     }
                     else{
+                      testSetupModal.lotNumber=lotNoController.text;
+                      testSetupModal.bubblePointType=bptThershold;
+                      testSetupModal.bubblePoint=double.tryParse(BptAccuracyController.text) ?? 0.0;
+                      testSetupModal.testPressureone=double.tryParse(testPressureFirstValueController.text) ?? 0.0;
+                      testSetupModal.testPressuretwo=double.tryParse(testPressureSecondValueController.text) ?? 0.0;
+                      testSetupModal.wettingFluid = {};
+                      testSetupModal.wettingFluid[wettingFluids]=wettingFluidsItemsTwo[wettingFluids];
+                      // print("Testsetup model : ${firstBox!.toMap()}");
+
+
+
+                      // testSetupModal.lotNumber=lotNoController.text;
+                      //
+                      firstBox!.put(sampleId, testSetupModal.toMap());
+                      //
+                      setState((){});
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => HomePage()),

@@ -61,7 +61,9 @@ class _CustomSmallContainerState extends State<CustomSmallContainer> {
           ),
           fillColor:Colors.transparent,
           filled: true,
-          contentPadding: EdgeInsets.symmetric(horizontal: 30),
+          contentPadding: EdgeInsets.only(left: 14,right: 3,top: 10,bottom: 0),
+          errorStyle: TextStyle(fontSize: 9,height: 0.2),
+
           focusedErrorBorder: OutlineInputBorder( borderRadius: BorderRadius. circular(100.0),borderSide: BorderSide(color: Colors.transparent)),
           errorBorder: OutlineInputBorder( borderRadius: BorderRadius. circular(100.0),borderSide: BorderSide(color: Colors.transparent)),
           focusedBorder: OutlineInputBorder( borderRadius: BorderRadius. circular(100.0),borderSide: BorderSide(color: Colors.transparent)),
